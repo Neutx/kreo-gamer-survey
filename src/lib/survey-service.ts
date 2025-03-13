@@ -59,6 +59,7 @@ export const saveSurveyResponses = async (
           completion_status: 'in_progress',
           completion_percentage: calculateCompletionPercentage(responses),
           current_section: currentSection,
+          email: responses.demographics?.email || '',
           // Preserve IP and device info if provided
           ...(user_info.ip_address ? { ip_address: user_info.ip_address } : {}),
           ...(user_info.device_fingerprint ? { device_fingerprint: user_info.device_fingerprint } : {})
@@ -76,6 +77,7 @@ export const saveSurveyResponses = async (
         'user_info.last_updated': serverTimestamp(),
         'user_info.completion_percentage': calculateCompletionPercentage(responses),
         'user_info.current_section': currentSection,
+        'user_info.email': responses.demographics?.email || existingUserInfo.email || '',
         // Preserve IP and device info if provided
         ...(user_info.ip_address ? { 'user_info.ip_address': user_info.ip_address } : 
             existingUserInfo.ip_address ? { 'user_info.ip_address': existingUserInfo.ip_address } : {}),

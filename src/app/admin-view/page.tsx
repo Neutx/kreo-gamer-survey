@@ -354,7 +354,7 @@ export default function AdminDashboard() {
                                 variant="outline" 
                                 size="sm"
                                 className="text-blue-400 border-blue-400 hover:bg-blue-900/20"
-                                onClick={() => {/* View logic */}}
+                                onClick={() => window.open(`/admin-view/response?id=${response.id}`, '_blank')}
                               >
                                 View
                               </Button>

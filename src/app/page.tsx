@@ -161,7 +161,7 @@ export default function Home() {
             
             <div className="mb-10 max-w-3xl mx-auto px-6 py-3 rounded-lg bg-gradient-to-r from-purple-900/60 to-pink-900/60 backdrop-blur-sm border border-purple-500/30">
               <p className="text-base sm:text-lg text-white">
-                <span className="font-bold text-yellow-300">3 Lucky Winners</span> to fill the survey would win a <span className="font-bold text-purple-300">Kreo Gaming Product</span> of their choice + <span className="font-bold">Everyone</span> who fills the form unlocks a <span className="font-bold text-green-300">discount code</span>
+                <span className="font-bold text-yellow-300">3 Lucky Winners</span> to fill the survey would win a <span className="font-bold text-purple-300">Kreo Gaming Product</span> of their choice + <span className="font-bold">Everyone</span> who fills the form unlocks a <span className="font-bold text-green-300">discount code [Over Now]</span>
               </p>
             </div>
             
