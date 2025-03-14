@@ -4,7 +4,7 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, Facebook } from 'lucide-react';
+import { Facebook, Info } from 'lucide-react';
 import { useToast } from '@/components/ui/toast';
 
 export default function ThankYou() {
@@ -15,8 +15,8 @@ export default function ThankYou() {
     // Only show toast once
     if (!toastShownRef.current) {
       toast({
-        title: "Thanks for participating!",
-        description: "We'll let you know if you win.",
+        title: "Survey Closed",
+        description: "Thank you for your interest.",
         duration: 5000,
       });
       toastShownRef.current = true;
@@ -37,37 +37,16 @@ export default function ThankYou() {
           transition={{ delay: 0.2, type: "spring", stiffness: 100 }}
         >
           <div className="flex justify-center mb-6">
-            <div className="w-20 h-20 rounded-full bg-green-100 flex items-center justify-center">
-              <Check className="h-10 w-10 text-green-600" />
+            <div className="w-20 h-20 rounded-full bg-blue-100 flex items-center justify-center">
+              <Info className="h-10 w-10 text-blue-600" />
             </div>
           </div>
           
           <h2 className="text-4xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600 mb-4">
-            Thank You for Participating! 🎮
+            This Survey is Now Closed
           </h2>
           <p className="text-muted-foreground text-lg mb-8">
-            Your responses will help us understand the Indian gaming community better.
-          </p>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-100"
-        >
-          <h3 className="text-xl font-bold text-gray-800 mb-2">Your Reward Coupon</h3>
-          <div className="bg-white py-3 px-4 rounded-md font-mono font-bold text-xl text-center tracking-wider mb-3 border-2 border-dashed border-purple-300">
-            HOWINDIAGAMES
-          </div>
-          <p className="text-gray-700 mb-4">
-            Get <span className="font-semibold">₹300 off</span> on your next order at{" "}
-            <a href="https://www.kreo-tech.com" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">
-              www.kreo-tech.com
-            </a>
-          </p>
-          <p className="text-xs text-gray-500">
-            Terms & Conditions: Minimum cart value ₹2,999/-. The products shall not be returnable.
+            Thank you to everyone who participated. Your feedback will help us understand the Indian gaming community better.
           </p>
         </motion.div>
 
@@ -77,17 +56,17 @@ export default function ThankYou() {
           transition={{ delay: 0.6 }}
           className="text-sm text-muted-foreground"
         >
-          <p>Share this survey with your fellow gamers!</p>
+          <p>Follow us on our socials for the latest updates!</p>
           <div className="flex justify-center gap-4 mt-4">
             <Button 
-              onClick={() => window.open('https://www.facebook.com/sharer/sharer.php?u=' + window.location.href, '_blank')}
+              onClick={() => window.open('https://www.facebook.com/Kreo.tech/', '_blank')}
               className="flex items-center gap-2 bg-[#1877F2] hover:bg-[#166FE5] text-white"
             >
               <Facebook className="h-4 w-4" />
               Share on Facebook
             </Button>
             <Button 
-              onClick={() => window.open('https://twitter.com/intent/tweet?url=' + window.location.href, '_blank')}
+              onClick={() => window.open('https://twitter.com/KreoTech', '_blank')}
               className="flex items-center gap-2 bg-black hover:bg-gray-800 text-white"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
