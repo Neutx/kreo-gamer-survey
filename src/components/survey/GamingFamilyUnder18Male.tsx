@@ -28,6 +28,45 @@ import {
 } from '@/components/ui/select';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
+const oldgenOptions = [
+  { value: 'yes', label: 'Yes' },
+  { value: 'no', label: 'No' },
+  { value: 'sometimes', label: 'Sometimes' },
+];
+const perceptionOptions = [
+  { value: 'waste_of_time', label: 'A waste of time' },
+  { value: 'fun_hobby', label: 'A fun hobby' },
+  { value: 'potential_career', label: 'A potential career' },
+  { value: 'dont_care', label: 'They don\'t care' },
+];
+
+const reasonOptions = [
+  { value: 'entertainment', label: 'Entertainment' },
+  { value: 'socializing', label: 'Socializing' },
+  { value: 'competitive', label: 'Competitive gaming' },
+  { value: 'stress_relief', label: 'Stress relief' },
+];
+
+const biasOptions = [
+  { value: 'yes', label: 'Yes' },
+  { value: 'no', label: 'No' },
+  { value: 'yes_can_talk', label: 'Yes. Can talk more about it...' },
+];
+
+const characterOptions = [
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+  { value: 'non_human', label: 'Non-human' },
+  { value: 'custom', label: 'Custom avatar' },
+];
+
+const yesNoOptions = [
+  { value: 'yes', label: 'Yes' },
+  { value: 'no', label: 'No' },
+  { value: 'sometimes', label: 'Sometimes' },
+];
+
+
 const perceptionOptions = [
   { value: 'waste_of_time', label: 'A waste of time' },
   { value: 'fun_hobby', label: 'A fun hobby' },
@@ -157,6 +196,147 @@ export default function GamingFamilyUnder18Male() {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          
+                              <FormLabel>Do you feel gaming is misunderstood by older generations?</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-background/50">
+                        <SelectValue placeholder="Select perception" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {oldgenOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            
+            <FormField
+              control={form.control}
+              name="family_perception"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>What do your parents think about your gaming?</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-background/50">
+                        <SelectValue placeholder="Select perception" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {perceptionOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+ <FormField
+              control={form.control}
+              name="primary_reason"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Primary reason to play games?</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-background/50">
+                        <SelectValue placeholder="Select your primary reason" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {reasonOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />         
+
+<FormField
+              control={form.control}
+              name="academic_networking"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>How has gaming affected your life?</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Describe any positive or negative impacts on your education, career connections, or opportunities..."
+                      className="bg-background/50 min-h-[80px]"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+ <FormField
+              control={form.control}
+              name="gender_bias"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Do you think gaming has a gender bias?</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-background/50">
+                        <SelectValue placeholder="Select typical reaction" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {biasOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+                        <FormField
+              control={form.control}
+              name="character_preference"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>In-game character preference?</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-background/50">
+                        <SelectValue placeholder="Select your character preference" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {characterOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+{/*             
+            
             <FormField
               control={form.control}
               name="family_perception"
@@ -450,7 +630,7 @@ export default function GamingFamilyUnder18Male() {
                 </FormItem>
               )}
             />
-
+ */}
             <div className="flex justify-end space-x-4 pt-4">
               <Button 
                 variant="outline" 

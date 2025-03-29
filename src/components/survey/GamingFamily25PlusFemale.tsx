@@ -254,7 +254,30 @@ export default function GamingFamily25PlusFemale() {
                 </FormItem>
               )}
             />
-
+<FormField
+              control={form.control}
+              name="promote_family"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Do you promote gaming in family/kids?</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-background/50">
+                        <SelectValue placeholder="Select your answer" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {yesNoOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
                         <FormField
               control={form.control}
               name="character_preference"
