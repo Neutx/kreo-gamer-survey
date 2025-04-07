@@ -27,6 +27,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { SurveySection } from "@/types/survey";
 
 const activityOptions = [
   {id:'anime',label:'Anime'},
@@ -132,8 +133,35 @@ const collectOptions = [
 
 
 export default function GamingLifestyle() {
-  const { updateResponses, goToNextSection, goToPreviousSection, responses } = useSurvey();
+  const { updateResponses, goToPreviousSection, responses, setCurrentSection } = useSurvey();
   const [filteredActivity, setFilteredActivity] = useState(activityOptions);
+
+  // Get the appropriate family section based on demographics
+  const getFamilySection = (): string => {
+    const age = responses.demographics?.age;
+    const gender = responses.demographics?.gender;
+    
+    if (!age || !gender) return 'gaming_family_under18_male'; // Default
+    
+    // Check if user is female, otherwise use male/non-binary version
+    const isFemale = gender.toLowerCase() === 'female';
+    
+    if (age === 'Under 18') {
+      return isFemale 
+        ? 'gaming_family_under18_female' 
+        : 'gaming_family_under18_male';
+    }
+    
+    if (age === '18-24') {
+      return isFemale
+        ? 'gaming_family_18to24_female' 
+        : 'gaming_family_18to24_male';
+    }
+    
+    return isFemale
+      ? 'gaming_family_25plus_female' 
+      : 'gaming_family_25plus_male';
+  };
 
   const savedData = (responses.gaming_lifestyle || {}) as {
     streams_content?: boolean;
@@ -146,6 +174,18 @@ export default function GamingLifestyle() {
     gaming_communities?: string[];
     gaming_subscriptions?: string[];
     gaming_news_sources?: string[];
+    interest?: string;
+    other_interests?: string;
+    customised_peripherals?: string[];
+    gaming_food?: string;
+    gaming_drink?: string;
+    watch_content?: string[];
+    fav_creator?: string;
+    esp_participation?: string[];
+    is_content_c?: string[];
+    in_game_spends?: string[];
+    merch_spends?: string[];
+    collectibles?: string[];
   };
 
   const form = useForm<z.infer<typeof gamingLifestyleSchema>>({
@@ -161,12 +201,32 @@ export default function GamingLifestyle() {
       gaming_communities: savedData.gaming_communities || [],
       gaming_subscriptions: savedData.gaming_subscriptions || [],
       gaming_news_sources: savedData.gaming_news_sources || [],
+      interest: savedData.interest || '',
+      other_interests: savedData.other_interests || '',
+      customised_peripherals: savedData.customised_peripherals || [],
+      gaming_food: savedData.gaming_food || '',
+      gaming_drink: savedData.gaming_drink || '',
+      watch_content: savedData.watch_content || [],
+      fav_creator: savedData.fav_creator || '',
+      esp_participation: savedData.esp_participation || [],
+      is_content_c: savedData.is_content_c || [],
+      in_game_spends: savedData.in_game_spends || [],
+      merch_spends: savedData.merch_spends || [],
+      collectibles: savedData.collectibles || [],
     },
   });
 
   function onSubmit(values: z.infer<typeof gamingLifestyleSchema>) {
-    updateResponses('gaming_lifestyle', values);
-    goToNextSection();
+    console.log('Form submitted with values:', values);
+    try {
+      updateResponses('gaming_lifestyle', values);
+      // Navigate to the appropriate family section based on demographics
+      const nextSection = getFamilySection() as SurveySection;
+      console.log('Navigating to section:', nextSection);
+      setCurrentSection(nextSection);
+    } catch (error) {
+      console.error('Error in form submission:', error);
+    }
   }
 
   return (
@@ -174,7 +234,7 @@ export default function GamingLifestyle() {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen flex items-center justify-center p-4"
+      className="min-h-screen flex items-center justify-center p-4 pt-24"
     >
       <Card className="w-full max-w-2xl glassmorphism space-y-8 p-8">
         <motion.div
@@ -192,26 +252,28 @@ export default function GamingLifestyle() {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-           
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-white">Apart from gaming, what do you follow?</h3>
               <FormField
                 control={form.control}
                 name="interest"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel className="text-white">Select one of the options!</FormLabel>
-                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormLabel className="text-lg font-semibold">Apart from gaming, what do you follow?</FormLabel>
+                    <Select 
+                      onValueChange={field.onChange} 
+                      defaultValue={field.value}
+                      value={field.value}
+                    >
                       <FormControl>
-                        <SelectTrigger className="bg-[#1A1A1A] border-[#333333] text-white">
-                          <SelectValue placeholder="Select your first favorite game" />
+                        <SelectTrigger className="bg-background/50">
+                          <SelectValue placeholder="Select your interests" />
                         </SelectTrigger>
                       </FormControl>
-                      <SelectContent className="bg-[#1A1A1A] border-[#333333]">
+                      <SelectContent>
                         <div className="p-2">
                           <Input
-                            placeholder="Search themes..."
-                            className="mb-2 bg-[#2A2A2A] border-[#333333] text-white"
+                            placeholder="Search interests..."
+                            className="mb-2 bg-background/50"
                             onChange={(e) => {
                               const searchTerm = e.target.value.toLowerCase();
                               setFilteredActivity(
@@ -223,11 +285,11 @@ export default function GamingLifestyle() {
                           />
                         </div>
                         {filteredActivity.map((option) => (
-                          <SelectItem key={option.id} value={option.id} className="text-white hover:bg-[#2A2A2A]">
+                          <SelectItem key={option.id} value={option.id}>
                             {option.label}
                           </SelectItem>
                         ))}
-                        <SelectItem value="other" className="text-white hover:bg-[#2A2A2A]">
+                        <SelectItem value="other">
                           Other
                         </SelectItem>
                       </SelectContent>
@@ -235,14 +297,14 @@ export default function GamingLifestyle() {
                     {field.value === 'other' && (
                       <FormField
                         control={form.control}
-                        name="interest"
+                        name="other_interests"
                         render={({ field: otherField }) => (
                           <FormItem className="mt-2">
                             <FormControl>
                               <Input
                                 {...otherField}
-                                placeholder="Enter your favorite activity"
-                                className="bg-[#1A1A1A] border-[#333333] text-white"
+                                placeholder="Enter your interests"
+                                className="bg-background/50"
                               />
                             </FormControl>
                           </FormItem>
@@ -252,7 +314,7 @@ export default function GamingLifestyle() {
                     <FormMessage className="text-red-500" />
                   </FormItem>
                 )}
-              />            
+              />
             </div>
             
             <FormField
@@ -982,7 +1044,13 @@ export default function GamingLifestyle() {
                 Previous Level
               </Button>
               <Button 
-                type="submit"
+                type="button"
+                onClick={() => {
+                  console.log('Button clicked');
+                  const values = form.getValues();
+                  console.log('Form values:', values);
+                  onSubmit(values);
+                }}
                 className="w-32 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
               >
                 Level Up!

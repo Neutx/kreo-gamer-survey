@@ -196,7 +196,6 @@ const popularGames2 = [
 {id:'the_division_2',label:'The Division 2'},
 {id:'hitman_trilogy',label:'Hitman Trilogy'},
 {id:'mass_effect_legendary_edition',label:'Mass Effect Legendary Edition'},
-{id:'outer_wilds',label:'Outer Wilds'},
 {id:'ori_and_the_will_of_the_wisps',label:'Ori and the Will of the Wisps'},
 {id:'hell_let_loose',label:'Hell Let Loose'},
 {id:'the_ascent',label:'The Ascent'},
@@ -308,7 +307,6 @@ const popularGames2 = [
 {id:'bug_fables',label:'Bug Fables'},
 {id:'disco_elysium',label:'Disco Elysium'},
 {id:'neon_white',label:'Neon White'},
-{id:'tunic',label:'Tunic'},
 {id:'evil_genius_2',label:'Evil Genius 2'},
 {id:'nier_replicant',label:'Nier Replicant'},
 {id:'the_long_dark',label:'The Long Dark'},
@@ -364,7 +362,7 @@ const sptypeOptions = [
 ];
 
 export default function GamingPreferences() {
-  const { updateResponses, goToNextSection, goToPreviousSection, responses } = useSurvey();
+  const { updateResponses, goToPreviousSection, responses, setCurrentSection } = useSurvey();
   const [filteredGames, setFilteredGames] = useState(popularGames2);
   
   const savedData = (responses.gaming_preferences || {}) as {
@@ -409,12 +407,29 @@ export default function GamingPreferences() {
       gear_upgrade: savedData.gear_upgrade || [],
       purchase_platforms: savedData.purchase_platforms || [],
       kreo_familiarity: savedData.kreo_familiarity || []
-    }
+    },
+    mode: "onSubmit"
   });
 
   const onSubmit = (data: z.infer<typeof gamingPreferencesSchema>) => {
-    updateResponses('gaming_preferences', data);
-    goToNextSection();
+    try {
+      // Ensure optional fields are arrays even if not provided
+      const formData = {
+        ...data,
+        preferred_genre: data.preferred_genre || [],
+        device_ownership: data.device_ownership || [],
+        favorite_developers: data.favorite_developers || []
+      };
+      
+      console.log('Form submitted successfully:', formData);
+      updateResponses('gaming_preferences', formData);
+      console.log('Responses updated, navigating to next section');
+      
+      // Explicitly navigate to GamingHabits section
+      setCurrentSection('gaming_habits');
+    } catch (error) {
+      console.error('Error submitting form:', error);
+    }
   };
 
   return (
@@ -480,46 +495,7 @@ export default function GamingPreferences() {
               )}
             />
 
-{/*             <FormField
-              control={form.control}
-              name="device_ownership"
-              render={() => (
-                <FormItem>
-                  <FormLabel>Gaming Devices Owned</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {deviceOptions.map((device) => (
-                      <FormField
-                        key={device.id}
-                        control={form.control}
-                        name="device_ownership"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(device.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, device.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== device.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {device.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
- */}
+
 
             <div className="space-y-6">
               <h3 className="text-lg font-semibold">Favorite Games</h3>
@@ -1022,6 +998,30 @@ export default function GamingPreferences() {
               <Button 
                 type="submit"
                 className="w-32 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                onClick={() => {
+                  console.log('Submit button clicked');
+                  // Manually submit the form and navigate to GamingHabits
+                  form.handleSubmit((data) => {
+                    try {
+                      // Ensure optional fields are arrays even if not provided
+                      const formData = {
+                        ...data,
+                        preferred_genre: data.preferred_genre || [],
+                        device_ownership: data.device_ownership || [],
+                        favorite_developers: data.favorite_developers || []
+                      };
+                      
+                      console.log('Form submitted successfully:', formData);
+                      updateResponses('gaming_preferences', formData);
+                      console.log('Responses updated, navigating to next section');
+                      
+                      // Explicitly navigate to GamingHabits section
+                      setCurrentSection('gaming_habits');
+                    } catch (error) {
+                      console.error('Error submitting form:', error);
+                    }
+                  })();
+                }}
               >
                 Level Up!
               </Button>

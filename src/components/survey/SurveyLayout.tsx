@@ -26,6 +26,7 @@ export default function SurveyLayout() {
   const { currentSection } = useSurvey();
 
   const renderSection = () => {
+    console.log('Rendering section:', currentSection);
     switch (currentSection) {
       case 'demographics':
         return <BasicDemographics />;
@@ -56,6 +57,7 @@ export default function SurveyLayout() {
       case 'future_gaming':
         return <FutureGaming />;
       default:
+        console.log('No matching section found, rendering ThankYou');
         return <ThankYou />;
     }
   };

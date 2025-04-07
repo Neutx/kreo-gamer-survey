@@ -20,17 +20,6 @@ interface SurveyContextType {
   forceSave: () => void;
 }
 
-// Base section order
-const BASE_SECTION_ORDER: SurveySection[] = [
-  'demographics',
-  // Demographics L2 is conditional and inserted dynamically
-  'gaming_preferences',
-  'gaming_habits',
-  'gaming_lifestyle',
-  // Family section is conditional and inserted dynamically
-  'future_gaming',
-];
-
 const LOCAL_STORAGE_KEYS = {
   RESPONSES: 'kreo_survey_responses',
   CURRENT_SECTION: 'kreo_survey_current_section',
@@ -93,7 +82,8 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
     const demographicSection = getDemographicSection();
     const familySection = getFamilySection();
     
-    return [
+    // Define the correct order of sections
+    const sectionOrder: SurveySection[] = [
       'demographics',
       demographicSection,
       'gaming_preferences',
@@ -102,6 +92,9 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
       familySection,
       'future_gaming',
     ];
+    
+    console.log('Section order determined:', sectionOrder);
+    return sectionOrder;
   };
 
   // Force save all data immediately to localStorage and Firebase
@@ -235,24 +228,39 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
   const isLastSection = currentSectionIndex === getSectionOrder().length - 1;
 
   const goToNextSection = () => {
+    console.log('goToNextSection called');
     const sectionOrder = getSectionOrder();
+    const currentSection = sectionOrder[currentSectionIndex];
+    console.log('Current section index:', currentSectionIndex);
+    console.log('Section order:', sectionOrder);
+    console.log('Current section:', currentSection);
+    
     if (currentSectionIndex < sectionOrder.length - 1) {
       // If we're on demographics, we need to go to the appropriate next section
       if (currentSection === 'demographics') {
         const demographicSection = getDemographicSection();
+        console.log('Going to demographic section:', demographicSection);
         const nextIndex = sectionOrder.indexOf(demographicSection);
         setCurrentSectionIndex(nextIndex);
       } else {
         // Normal progression
-        setCurrentSectionIndex(prev => prev + 1);
+        const nextIndex = currentSectionIndex + 1;
+        const nextSection = sectionOrder[nextIndex];
+        console.log('Going to next section, new index:', nextIndex);
+        console.log('Next section:', nextSection);
+        setCurrentSectionIndex(nextIndex);
       }
     } else if (currentSectionIndex === sectionOrder.length - 1) {
       // If this is the last section, mark as completed
+      console.log('This is the last section, marking as completed');
       const responseId = localStorage.getItem(LOCAL_STORAGE_KEYS.RESPONSE_ID);
       if (responseId) {
         markSurveyCompleted(responseId);
       }
     }
+    
+    // Force save after navigation
+    forceSave();
   };
 
   const goToPreviousSection = () => {
