@@ -55,26 +55,31 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
     const age = responses.demographics?.age;
     const gender = responses.demographics?.gender;
     
-    if (!age || !gender) return 'gaming_family_under18_male'; // Default
+    if (!age || !gender) {
+      console.log('Missing age or gender, using default section');
+      return 'gaming_family_under18_male';
+    }
+    
+    console.log('Determining family section for:', { age, gender });
     
     // Check if user is female, otherwise use male/non-binary version
     const isFemale = gender.toLowerCase() === 'female';
     
     if (age === 'Under 18') {
-      return isFemale 
-        ? 'gaming_family_under18_female' 
-        : 'gaming_family_under18_male';
+      const section = isFemale ? 'gaming_family_under18_female' : 'gaming_family_under18_male';
+      console.log('Selected section for Under 18:', section);
+      return section;
     }
     
     if (age === '18-24') {
-      return isFemale
-        ? 'gaming_family_18to24_female' 
-        : 'gaming_family_18to24_male';
+      const section = isFemale ? 'gaming_family_18to24_female' : 'gaming_family_18to24_male';
+      console.log('Selected section for 18-24:', section);
+      return section;
     }
     
-    return isFemale
-      ? 'gaming_family_25plus_female' 
-      : 'gaming_family_25plus_male';
+    const section = isFemale ? 'gaming_family_25plus_female' : 'gaming_family_25plus_male';
+    console.log('Selected section for 25+:', section);
+    return section;
   };
   
   // Get dynamic section order based on current responses

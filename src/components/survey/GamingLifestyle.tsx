@@ -136,33 +136,6 @@ export default function GamingLifestyle() {
   const { updateResponses, goToPreviousSection, responses, setCurrentSection } = useSurvey();
   const [filteredActivity, setFilteredActivity] = useState(activityOptions);
 
-  // Get the appropriate family section based on demographics
-  const getFamilySection = (): string => {
-    const age = responses.demographics?.age;
-    const gender = responses.demographics?.gender;
-    
-    if (!age || !gender) return 'gaming_family_under18_male'; // Default
-    
-    // Check if user is female, otherwise use male/non-binary version
-    const isFemale = gender.toLowerCase() === 'female';
-    
-    if (age === 'Under 18') {
-      return isFemale 
-        ? 'gaming_family_under18_female' 
-        : 'gaming_family_under18_male';
-    }
-    
-    if (age === '18-24') {
-      return isFemale
-        ? 'gaming_family_18to24_female' 
-        : 'gaming_family_18to24_male';
-    }
-    
-    return isFemale
-      ? 'gaming_family_25plus_female' 
-      : 'gaming_family_25plus_male';
-  };
-
   const savedData = (responses.gaming_lifestyle || {}) as {
     streams_content?: boolean;
     platform_handles?: string[];
@@ -220,9 +193,31 @@ export default function GamingLifestyle() {
     console.log('Form submitted with values:', values);
     try {
       updateResponses('gaming_lifestyle', values);
-      // Navigate to the appropriate family section based on demographics
-      const nextSection = getFamilySection() as SurveySection;
-      console.log('Navigating to section:', nextSection);
+      
+      // Get user's age and gender from demographics
+      const age = responses.demographics?.age;
+      const gender = responses.demographics?.gender;
+      
+      console.log('User demographics:', { age, gender });
+      
+      // Determine the correct family section
+      let nextSection: SurveySection;
+      
+      if (age === 'Under 18') {
+        nextSection = gender?.toLowerCase() === 'female' 
+          ? 'gaming_family_under18_female' 
+          : 'gaming_family_under18_male';
+      } else if (age === '18-24') {
+        nextSection = gender?.toLowerCase() === 'female'
+          ? 'gaming_family_18to24_female'
+          : 'gaming_family_18to24_male';
+      } else {
+        nextSection = gender?.toLowerCase() === 'female'
+          ? 'gaming_family_25plus_female'
+          : 'gaming_family_25plus_male';
+      }
+      
+      console.log('Navigating to family section:', nextSection);
       setCurrentSection(nextSection);
     } catch (error) {
       console.error('Error in form submission:', error);
