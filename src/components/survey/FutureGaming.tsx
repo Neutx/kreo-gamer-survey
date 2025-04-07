@@ -50,7 +50,7 @@ const futuregamingOptions = [
 
 
 export default function FutureGaming() {
-  const { updateResponses, goToPreviousSection, goToNextSection, responses } = useSurvey();
+  const { updateResponses, goToPreviousSection, responses, setCurrentSection, getSectionOrder } = useSurvey();
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const savedData = (responses.future_gaming || {}) as {
@@ -82,9 +82,15 @@ export default function FutureGaming() {
 
   function onSubmit(values: z.infer<typeof futureGamingSchema>) {
     console.log('Submitting final form', values);
-    updateResponses('future_gaming', values);
-    goToNextSection();
-    setIsSubmitted(true);
+    try {
+      // Update responses in context
+      updateResponses('future_gaming', values);
+      
+      // Set submitted state to show ThankYou component
+      setIsSubmitted(true);
+    } catch (error) {
+      console.error('Error in form submission:', error);
+    }
   }
 
   if (isSubmitted) {

@@ -145,22 +145,24 @@ export const gamingFamily18to24MaleSchema = z.object({
   college_events: z.string({ required_error: 'Please select frequency' }),
   replace_social: z.string({ required_error: 'Please select frequency' }),
   gaming_career: z.string({ required_error: 'Please select an option' }),
+  old_generation: z.string({ required_error: 'Please select an option' }),
+  academic_networking: z.string({ required_error: 'Please describe the impact' }),
 });
 
 export const gamingFamily18to24FemaleSchema = z.object({
   family_perception: z.string({ required_error: 'Please select perception' }),
   family_gamers: z.boolean(),
-  gaming_impact: z.string().min(10, { message: 'Please describe the impact' }),
+  gaming_impact: z.string().optional(),
   character_preference: z.string({ required_error: 'Please select your preference' }),
   gender_bias: z.string({ required_error: 'Please select an option' }),
   primary_reason: z.string({ required_error: 'Please select your primary reason' }),
-  peers_reaction: z.string({ required_error: 'Please select a reaction' }),
-  women_communities: z.string({ required_error: 'Please select an option' }),
-  dating_supportive: z.string({ required_error: 'Please select an option' }),
+  peers_reaction: z.string({ required_error: 'Please select typical reaction' }),
+  women_communities: z.string({ required_error: 'Please select your answer' }),
+  dating_supportive: z.string({ required_error: 'Please select level of support' }),
   gender_interactions: z.string({ required_error: 'Please select frequency' }),
   hide_gender: z.string({ required_error: 'Please select frequency' }),
-  academic_networking: z.string({ required_error: 'Please describe the impact' }),
-  feel_represented: z.string({ required_error: 'Please select an option' }),
+  academic_networking: z.string({ required_error: 'Please select an option' }),
+  feel_represented: z.string({ required_error: 'Please select level of representation' }),
 });
 
 export const gamingFamily25PlusMaleSchema = z.object({
@@ -178,19 +180,21 @@ export const gamingFamily25PlusMaleSchema = z.object({
   stress_relief: z.string({ required_error: 'Please select frequency' }),
   use_for_networking: z.string({ required_error: 'Please select an option' }),
   monthly_spending: z.string({ required_error: 'Please select spending amount' }),
+  old_generation: z.string({ required_error: 'Please select an option' }),
+  academic_networking: z.string({ required_error: 'Please describe the impact' }),
 });
 
 export const gamingFamily25PlusFemaleSchema = z.object({
   family_perception: z.string({ required_error: 'Please select perception' }),
   family_gamers: z.boolean(),
-  gaming_impact: z.string().min(10, { message: 'Please describe the impact' }),
+  gaming_impact: z.string().optional(),
   character_preference: z.string({ required_error: 'Please select your preference' }),
   gender_bias: z.string({ required_error: 'Please select an option' }),
   primary_reason: z.string({ required_error: 'Please select your primary reason' }),
   game_with_partner: z.string({ required_error: 'Please select frequency' }),
   female_experience: z.string({ required_error: 'Please select impact' }),
   family_balance: z.string({ required_error: 'Please select how well you balance' }),
-  perspective_change: z.string().min(10, { message: 'Please describe how your perspective has changed' }),
+  perspective_change: z.string().optional(),
   gender_interactions: z.string({ required_error: 'Please select frequency' }),
   representation: z.string({ required_error: 'Please select level of representation' }),
   gaming_networking: z.string({ required_error: 'Please select an option' }),

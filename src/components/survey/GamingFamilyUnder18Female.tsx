@@ -66,7 +66,7 @@ const yesNoOptions = [
 
 
 export default function GamingFamilyUnder18Female() {
-  const { updateResponses, goToNextSection, goToPreviousSection, responses } = useSurvey();
+  const { updateResponses, goToPreviousSection, responses, setCurrentSection } = useSurvey();
 
   const savedData = (responses.gaming_family_under18_female || {}) as {
     family_perception?: string;
@@ -104,8 +104,14 @@ export default function GamingFamilyUnder18Female() {
   });
 
   function onSubmit(values: z.infer<typeof gamingFamilyUnder18FemaleSchema>) {
-    updateResponses('gaming_family_under18_female', values);
-    goToNextSection();
+    console.log('Form submitted with values:', values);
+    try {
+      updateResponses('gaming_family_under18_female', values);
+      console.log('Navigating to future_gaming section');
+      setCurrentSection('future_gaming');
+    } catch (error) {
+      console.error('Error in form submission:', error);
+    }
   }
 
   return (

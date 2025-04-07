@@ -17,6 +17,7 @@ interface SurveyContextType {
   lastSaved: Date | null;
   getDemographicSection: () => SurveySection;
   getFamilySection: () => SurveySection;
+  getSectionOrder: () => SurveySection[];
   forceSave: () => void;
 }
 
@@ -341,6 +342,7 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
         lastSaved,
         getDemographicSection,
         getFamilySection,
+        getSectionOrder,
         forceSave,
       }}
     >

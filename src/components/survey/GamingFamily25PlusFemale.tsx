@@ -25,12 +25,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-const oldgenOptions = [
-  { value: 'yes', label: 'Yes' },
-  { value: 'no', label: 'No' },
-  { value: 'sometimes', label: 'Sometimes' },
-];
+import { Checkbox } from '@/components/ui/checkbox';
 
 const yesNoOptions = [
   { value: 'yes', label: 'Yes' },
@@ -42,7 +37,7 @@ const perceptionOptions = [
   { value: 'waste_of_time', label: 'A waste of time' },
   { value: 'fun_hobby', label: 'A fun hobby' },
   { value: 'potential_career', label: 'A potential career' },
-  { value: 'dont_care', label: 'They don\'t care' },
+  { value: 'dont_care', label: 'They don&apos;t care' },
 ];
 
 const reasonOptions = [
@@ -65,6 +60,52 @@ const characterOptions = [
   { value: 'custom', label: 'Custom avatar' },
 ];
 
+const frequencyOptions = [
+  { value: 'never', label: 'Never' },
+  { value: 'rarely', label: 'Rarely' },
+  { value: 'sometimes', label: 'Sometimes' },
+  { value: 'often', label: 'Often' },
+  { value: 'very_often', label: 'Very often' },
+];
+
+const impactOptions = [
+  { value: 'positive', label: 'Positive' },
+  { value: 'negative', label: 'Negative' },
+  { value: 'neutral', label: 'Neutral' },
+  { value: 'mixed', label: 'Mixed' },
+];
+
+const balanceOptions = [
+  { value: 'very_well', label: 'Very well' },
+  { value: 'well', label: 'Well' },
+  { value: 'neutral', label: 'Neutral' },
+  { value: 'poorly', label: 'Poorly' },
+  { value: 'very_poorly', label: 'Very poorly' },
+];
+
+const representationOptions = [
+  { value: 'very_represented', label: 'Very represented' },
+  { value: 'somewhat_represented', label: 'Somewhat represented' },
+  { value: 'neutral', label: 'Neutral' },
+  { value: 'somewhat_misrepresented', label: 'Somewhat misrepresented' },
+  { value: 'very_misrepresented', label: 'Very misrepresented' },
+];
+
+const communityOptions = [
+  { value: 'very_supportive', label: 'Very supportive' },
+  { value: 'somewhat_supportive', label: 'Somewhat supportive' },
+  { value: 'neutral', label: 'Neutral' },
+  { value: 'somewhat_unsupportive', label: 'Somewhat unsupportive' },
+  { value: 'very_unsupportive', label: 'Very unsupportive' },
+];
+
+const stereotypeNavigationOptions = [
+  { value: 'ignore', label: 'Ignore them' },
+  { value: 'challenge', label: 'Challenge them' },
+  { value: 'prove_wrong', label: 'Prove them wrong' },
+  { value: 'find_support', label: 'Find supportive communities' },
+  { value: 'other', label: 'Other approach' },
+];
 
 export default function GamingFamily25PlusFemale() {
   const { updateResponses, goToNextSection, goToPreviousSection, responses } = useSurvey();
@@ -142,33 +183,7 @@ export default function GamingFamily25PlusFemale() {
               name="family_perception"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Do you feel gaming is misunderstood by older generations?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select perception" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {oldgenOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            
-            <FormField
-              control={form.control}
-              name="family_perception"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>What do your parents think about your gaming?</FormLabel>
+                  <FormLabel>How does your partner/family view your gaming?</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-background/50">
@@ -188,41 +203,36 @@ export default function GamingFamily25PlusFemale() {
               )}
             />
 
- <FormField
+            <FormField
               control={form.control}
-              name="primary_reason"
+              name="family_gamers"
               render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Primary reason to play games?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your primary reason" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {reasonOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Do you involve your children/family in gaming?
+                    </FormLabel>
+                  </div>
                 </FormItem>
               )}
-            />         
+            />
 
-<FormField
+            <FormField
               control={form.control}
-              name="gaming_networking"
+              name="gaming_impact"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>How has gaming affected your life?</FormLabel>
+                  <FormLabel>How has gaming influenced your adult life and relationships?</FormLabel>
                   <FormControl>
                     <Textarea
-                      placeholder="Describe any positive or negative impacts on your education, career connections, or opportunities..."
-                      className="bg-background/50 min-h-[80px]"
+                      placeholder="Describe how gaming impacts your professional life, family dynamics, or personal identity..."
+                      className="bg-background/50 min-h-[100px]"
                       {...field}
                     />
                   </FormControl>
@@ -230,32 +240,8 @@ export default function GamingFamily25PlusFemale() {
                 </FormItem>
               )}
             />
- <FormField
-              control={form.control}
-              name="gender_bias"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Do you think gaming has a gender bias?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select typical reaction" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {biasOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
 
-                        <FormField
+            <FormField
               control={form.control}
               name="character_preference"
               render={({ field }) => (
@@ -279,23 +265,21 @@ export default function GamingFamily25PlusFemale() {
                 </FormItem>
               )}
             />
-            
-           
 
             <FormField
               control={form.control}
-              name="community_support"
+              name="gender_bias"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Do you participate in gaming communities specifically for women?</FormLabel>
+                  <FormLabel>Do you experience gender bias in gaming communities?</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your answer" />
+                        <SelectValue placeholder="Select typical reaction" />
                       </SelectTrigger>
-                    </FormControl>  
+                    </FormControl>
                     <SelectContent>
-                      {yesNoOptions.map((option) => (
+                      {biasOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
@@ -306,23 +290,21 @@ export default function GamingFamily25PlusFemale() {
                 </FormItem>
               )}
             />
-        
-            
-            
-{/*             <FormField
+
+            <FormField
               control={form.control}
-              name="family_perception"
+              name="primary_reason"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>How does your partner/family view your gaming?</FormLabel>
+                  <FormLabel>Primary reason to play games?</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select perception" />
+                        <SelectValue placeholder="Select your primary reason" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
-                      {perceptionOptions.map((option) => (
+                      {reasonOptions.map((option) => (
                         <SelectItem key={option.value} value={option.value}>
                           {option.label}
                         </SelectItem>
@@ -343,7 +325,7 @@ export default function GamingFamily25PlusFemale() {
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select an option" />
+                        <SelectValue placeholder="Select frequency" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -552,125 +534,6 @@ export default function GamingFamily25PlusFemale() {
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="primary_reason"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Primary reason to play games?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your primary reason" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {reasonOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="gender_bias"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Do you experience gender bias in gaming communities?</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex space-x-8"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="gender_bias_yes" />
-                        <FormLabel htmlFor="gender_bias_yes" className="font-normal">
-                          Yes
-                        </FormLabel>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="gender_bias_no" />
-                        <FormLabel htmlFor="gender_bias_no" className="font-normal">
-                          No
-                        </FormLabel>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="character_preference"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>In-game character preference?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your character preference" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {characterOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="family_gamers"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Do you involve your children/family in gaming?
-                    </FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="gaming_impact"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>How has gaming influenced your adult life and relationships?</FormLabel>
-                  <FormControl>
-                    <Textarea
-                      placeholder="Describe how gaming impacts your professional life, family dynamics, or personal identity..."
-                      className="bg-background/50 min-h-[100px]"
-                      {...field}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
- */}
             <div className="flex justify-end space-x-4 pt-4">
               <Button 
                 variant="outline" 

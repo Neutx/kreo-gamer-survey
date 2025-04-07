@@ -107,6 +107,8 @@ export interface SurveyData {
     college_events?: string;
     replace_social?: string;
     gaming_career?: string;
+    old_generation?: string;
+    academic_networking?: string;
   };
   gaming_family_18to24_female?: {
     family_perception: string;
@@ -138,6 +140,8 @@ export interface SurveyData {
     stress_relief?: string;
     use_for_networking?: string;
     monthly_spending?: string;
+    old_generation?: string;
+    academic_networking?: string;
   };
   gaming_family_25plus_female?: {
     family_perception: string;
