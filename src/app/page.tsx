@@ -26,33 +26,35 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center">
       {/* Hero Section */}
-      <section className="w-full relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/70 to-indigo-900/90 z-10" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center z-0 opacity-20" />
+      <section className="hero-bg">
+        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/70 to-indigo-900/90 z-20" />
+        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center z-10 opacity-20" />
         
-        <div className="hidden md:block">
+        <div className="hero-bg-desktop">
           <Image 
             src="/hero-bg.jpg" 
             alt="Gaming Background" 
             width={1920} 
             height={1080}
-            className="w-full h-screen object-cover"
+            className="hero-bg-image"
             priority
+            quality={90}
           />
         </div>
         
-        <div className="block md:hidden">
+        <div className="hero-bg-mobile">
           <Image 
             src="/hero-mobile.jpg" 
             alt="Gaming Background Mobile" 
             width={768} 
             height={1024}
-            className="w-full h-screen object-cover"
+            className="hero-bg-image"
             priority
+            quality={90}
           />
         </div>
         
-        <div className="absolute inset-0 flex flex-col items-center justify-center z-20 px-4 md:px-0">
+        <div className="relative z-30 flex min-h-screen flex-col items-center justify-center text-center px-4">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -75,7 +77,7 @@ export default function Home() {
           </motion.div>
         </div>
         
-        <div className="absolute bottom-10 left-0 right-0 flex justify-center z-20">
+        <div className="absolute bottom-10 left-0 right-0 flex justify-center z-30">
           <motion.div 
             animate={{ y: [0, 10, 0] }} 
             transition={{ repeat: Infinity, duration: 1.5 }}

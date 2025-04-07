@@ -20,8 +20,6 @@ body {
   background: rgb(var(--background-start-rgb));
 }
 
-
-
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -78,8 +76,6 @@ body {
   }
 }
 
-
-
 @layer base {
   * {
     @apply border-border outline-ring/50;
@@ -87,4 +83,32 @@ body {
   body {
     @apply bg-background text-foreground;
   }
+}
+
+/* Hero Background Styles */
+.hero-bg {
+  @apply relative w-full h-screen overflow-hidden;
+}
+
+.hero-bg::before {
+  content: '';
+  @apply absolute inset-0 bg-black/30 backdrop-blur-[2px] z-10;
+}
+
+.hero-bg-image {
+  @apply absolute inset-0 w-full h-full object-cover;
+  filter: brightness(0.9);
+}
+
+.hero-bg-desktop {
+  @apply hidden md:block;
+}
+
+.hero-bg-mobile {
+  @apply block md:hidden;
+}
+
+/* Glassmorphism Card Effect */
+.glassmorphism {
+  @apply bg-white/10 backdrop-blur-lg border border-white/20;
 } 
