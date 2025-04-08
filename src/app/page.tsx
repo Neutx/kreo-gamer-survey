@@ -301,7 +301,7 @@ export default function Home() {
               </Button>
             </Link>
             <p className="text-gray-300 mt-6">
-              Takes only 5-10 minutes to complete
+              Takes only 5 minutes to complete
             </p>
           </motion.div>
         </div>
