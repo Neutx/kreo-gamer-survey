@@ -247,7 +247,7 @@ export default function Home() {
                   title: "Mobile Gaming Enthusiast"
                 },
                 {
-                  quote: "The survey was quick and easy to complete. I&apos;m excited to see the results and how Indian gaming trends compare to global ones.",
+                  quote: "The survey was quick and easy to complete. I'm excited to see the results and how Indian gaming trends compare to global ones.",
                   name: "Vikram J.",
                   title: "Console Gamer"
                 }
