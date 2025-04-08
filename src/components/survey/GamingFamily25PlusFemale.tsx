@@ -50,7 +50,7 @@ const reasonOptions = [
 const biasOptions = [
   { value: 'yes', label: 'Yes' },
   { value: 'no', label: 'No' },
-  { value: 'yes_can_talk', label: 'Yes. Can talk more about it...' },
+  { value: 'yes_can_talk', label: 'Yes, and I want to share my thoughts' },
 ];
 
 const characterOptions = [
@@ -271,11 +271,11 @@ export default function GamingFamily25PlusFemale() {
               name="gender_bias"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Do you experience gender bias in gaming communities?</FormLabel>
+                  <FormLabel>Do you think gaming has a gender bias? Do you want to talk about it?</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select typical reaction" />
+                        <SelectValue placeholder="Select an option" />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent>
@@ -290,6 +290,26 @@ export default function GamingFamily25PlusFemale() {
                 </FormItem>
               )}
             />
+
+            {form.watch('gender_bias') === 'yes_can_talk' && (
+              <FormField
+                control={form.control}
+                name="gender_bias_explanation"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Please share your thoughts about gender bias in gaming</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Tell us about your experiences or observations..."
+                        className="bg-background/50 min-h-[100px]"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}
