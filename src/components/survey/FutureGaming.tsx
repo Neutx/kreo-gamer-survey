@@ -10,6 +10,7 @@ import { futureGamingSchema } from '@/lib/survey-validation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
   FormControl,
@@ -17,6 +18,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import {
   Select,
@@ -50,7 +52,7 @@ const futuregamingOptions = [
 
 
 export default function FutureGaming() {
-  const { updateResponses, goToPreviousSection, responses, setCurrentSection, getSectionOrder } = useSurvey();
+  const { updateResponses, goToPreviousSection, responses } = useSurvey();
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const savedData = (responses.future_gaming || {}) as {
@@ -63,6 +65,7 @@ export default function FutureGaming() {
     subscription_services?: string;
     future_spending?: string;
     future_gaming?: string[];
+    additional_feedback?: string;
   };
 
   const form = useForm<z.infer<typeof futureGamingSchema>>({
@@ -77,16 +80,14 @@ export default function FutureGaming() {
       subscription_services: savedData.subscription_services || '',
       future_spending: savedData.future_spending || '',
       future_gaming: savedData.future_gaming || [],
+      additional_feedback: savedData.additional_feedback || '',
     },
   });
 
   function onSubmit(values: z.infer<typeof futureGamingSchema>) {
     console.log('Submitting final form', values);
     try {
-      // Update responses in context
       updateResponses('future_gaming', values);
-      
-      // Set submitted state to show ThankYou component
       setIsSubmitted(true);
     } catch (error) {
       console.error('Error in form submission:', error);
@@ -187,195 +188,41 @@ export default function FutureGaming() {
               )}
             />
 
-{/*             <FormField
+            <FormField
               control={form.control}
-              name="ai_in_games"
+              name="additional_feedback"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Thoughts on AI in Games</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your thoughts on AI" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {aiInterestOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Would you like to share anything else with us?</FormLabel>
+                  <FormDescription className="text-gray-400">
+                    Feel free to share any thoughts, suggestions, or feedback about gaming in India.
+                  </FormDescription>
+                  <FormControl>
+                    <Textarea
+                      placeholder="Your thoughts and feedback are valuable to us..."
+                      className="bg-background/50 min-h-[120px] resize-y"
+                      {...field}
+                    />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
 
-            <FormField
-              control={form.control}
-              name="blockchain_gaming"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Interest in Blockchain Gaming</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your interest in blockchain gaming" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {blockchainOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="vr_adoption"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>VR Gaming Plans</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your VR plans" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {vrAdoptionOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="cloud_gaming"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Cloud Gaming Preference</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your preference" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {cloudGamingOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="subscription_services"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Subscription Services vs. Game Ownership</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your preference" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {subscriptionOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="future_spending"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Future Gaming Spending Plans</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your future spending plans" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {spendingOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="sustainability"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Importance of Gaming Sustainability</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select importance level" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {sustainabilityOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            /> */}
-
-            <div className="flex justify-end space-x-4 pt-4">
+            <div className="flex justify-end space-x-4 pt-8">
               <Button 
                 variant="outline" 
                 type="button" 
                 onClick={goToPreviousSection}
-                className="w-32"
+                className="w-32 h-12 text-base hover:bg-purple-500/10"
               >
-                Previous Level
+                Previous
               </Button>
               <Button 
                 type="submit"
-                className="w-32 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+                className="w-auto px-8 h-12 text-base bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-purple-500/25 transition-all duration-300 flex items-center gap-2 rounded-xl"
               >
-                Submit! (Surprise ahead 😉)
+                 Submit! (Surprise ahead 😉)
               </Button>
             </div>
           </form>

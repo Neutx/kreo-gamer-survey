@@ -64,7 +64,14 @@ export const gamingPreferencesSchema = z.object({
   gaming_spends: z.array(z.string()).min(1, { message: 'Select your spending preference' }),
   gear_upgrade: z.array(z.string()).min(1, { message: 'Select your upgrade frequency' }),
   purchase_platforms: z.array(z.string()).min(1, { message: 'Select at least one platform' }),
-  kreo_familiarity: z.array(z.string()).min(1, { message: 'Select your familiarity' })
+  kreo_familiarity: z.array(z.string()).min(1, { message: 'Select your familiarity' }),
+  gear_features: z.object({
+    performance: z.number().min(1).max(5),
+    aesthetics: z.number().min(1).max(5),
+    durability: z.number().min(1).max(5),
+    price: z.number().min(1).max(5),
+    brand: z.number().min(1).max(5),
+  }),
 });
 
 export const gamingHabitsSchema = z.object({
@@ -214,10 +221,11 @@ export const futureGamingSchema = z.object({
   metaverse_interest: z.string({ required_error: 'Please rate your interest' }),
   vr_adoption: z.string({ required_error: 'Please select your VR plans' }),
   cloud_gaming: z.string({ required_error: 'Please select your preference' }),
-  sustainability: z.string({ required_error: 'Please rate importance' }),
+  sustainability: z.string().min(1, { message: 'Please select an option' }),
   ai_in_games: z.string({ required_error: 'Please rate your interest in AI' }),
   blockchain_gaming: z.string({ required_error: 'Please rate your interest in blockchain gaming' }),
   subscription_services: z.string({ required_error: 'Please select your preference' }),
   future_spending: z.string({ required_error: 'Please select your future spending plans' }),
-  future_gaming: z.array(z.string()).optional(),
+  future_gaming: z.array(z.string()).min(1, { message: 'Please select at least one option' }),
+  additional_feedback: z.string().optional(),
 }); 

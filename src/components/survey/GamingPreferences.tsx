@@ -18,6 +18,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from '@/components/ui/form';
 import {
   Select,
@@ -26,6 +27,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const platforms = [
   { id: 'pc', label: 'PC 🖥️  ' },
@@ -359,6 +369,22 @@ const sptypeOptions = [
   { id: 'regularly', label: 'Yes, regularly' },
   { id: 'occasionally', label: ' Occasionally' },
   { id: 'free', label: ' No, I play free games only' },
+];
+
+type GearFeatures = {
+  performance: number;
+  aesthetics: number;
+  durability: number;
+  price: number;
+  brand: number;
+};
+
+const gearFeatures = [
+  { id: 'performance' as keyof GearFeatures, label: 'Performance' },
+  { id: 'aesthetics' as keyof GearFeatures, label: 'Aesthetics' },
+  { id: 'durability' as keyof GearFeatures, label: 'Durability' },
+  { id: 'price' as keyof GearFeatures, label: 'Price' },
+  { id: 'brand' as keyof GearFeatures, label: 'Brand' },
 ];
 
 export default function GamingPreferences() {
@@ -834,6 +860,60 @@ export default function GamingPreferences() {
                       />
                     ))}
                   </div>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+          
+ <FormField
+              control={form.control}
+              name="gear_features"
+              render={({ field }) => (
+                <FormItem className="space-y-4">
+                  <FormLabel>What features matter most in gaming gear? (Rate from 1-5)</FormLabel>
+                  <FormDescription className="text-sm text-muted-foreground">
+                    1 = Least Important, 5 = Most Important
+                  </FormDescription>
+                  <Table>
+                    <TableHeader>
+                      <TableRow className="hover:bg-transparent">
+                        <TableHead className="w-[200px]">Feature</TableHead>
+                        {[1, 2, 3, 4, 5].map((rating) => (
+                          <TableHead key={rating} className="text-center">
+                            {rating}
+                          </TableHead>
+                        ))}
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {gearFeatures.map((feature) => (
+                        <TableRow key={feature.id} className="hover:bg-transparent">
+                          <TableCell className="font-medium">{feature.label}</TableCell>
+                          {[1, 2, 3, 4, 5].map((rating) => (
+                            <TableCell key={rating} className="text-center">
+                              <RadioGroup
+                                value={field.value?.[feature.id]?.toString() ?? ''}
+                                onValueChange={(value) => {
+                                  field.onChange({
+                                    ...field.value,
+                                    [feature.id]: parseInt(value),
+                                  } as GearFeatures);
+                                }}
+                                className="flex justify-center"
+                              >
+                                <RadioGroupItem
+                                  value={rating.toString()}
+                                  id={`${feature.id}-${rating}`}
+                                  className="data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                                />
+                              </RadioGroup>
+                            </TableCell>
+                          ))}
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
                   <FormMessage />
                 </FormItem>
               )}
