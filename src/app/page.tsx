@@ -13,6 +13,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from '@/components/ui/carousel';
+import { Boxes } from "@/components/ui/background-boxes";
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -26,51 +27,42 @@ export default function Home() {
   return (
     <main className="flex min-h-screen flex-col items-center">
       {/* Hero Section */}
-      <section className="hero-bg">
-        <div className="absolute inset-0 bg-gradient-to-b from-purple-900/70 to-indigo-900/90 z-20" />
-        <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center z-10 opacity-20" />
-        
-        <div className="hero-bg-desktop">
-          <Image 
-            src="/hero-bg.jpg" 
-            alt="Gaming Background" 
-            width={1920} 
-            height={1080}
-            className="hero-bg-image"
-            priority
-            quality={90}
-          />
-        </div>
-        
-        <div className="hero-bg-mobile">
+      <section className="relative min-h-screen w-full overflow-hidden bg-slate-900 flex flex-col items-center justify-center">
+        {/* Mobile Background */}
+        <div className="md:hidden absolute inset-0">
           <Image 
             src="/hero-mobile.jpg" 
             alt="Gaming Background Mobile" 
-            width={768} 
-            height={1024}
-            className="hero-bg-image"
+            fill
+            className="object-cover brightness-50"
             priority
             quality={90}
           />
         </div>
+
+        {/* Desktop Background with Boxes */}
+        <div className="hidden md:block absolute inset-0">
+          <div className="absolute inset-0 w-full h-full bg-slate-900 z-20 [mask-image:radial-gradient(transparent,white)] pointer-events-none" />
+          <Boxes />
+        </div>
         
-        <div className="relative z-30 flex min-h-screen flex-col items-center justify-center text-center px-4">
+        <div className="relative z-30 flex min-h-screen flex-col items-center justify-center text-center px-4 pointer-events-none">
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             className="text-center max-w-4xl"
           >
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight">
+            <h1 className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-bold text-white mb-6 leading-tight font-stardom">
               <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">
-                Kreo Ultimate Gamer Survey
+                How India Games
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-200 mb-8 max-w-2xl mx-auto">
-              Are You Ready to Respawn? 🎮🔥 Help shape the future of gaming in India.
+            <p className="text-lg sm:text-xl md:text-2xl text-gray-200 mb-12 max-w-3xl mx-auto font-stardom">
+              The largest gaming survey in India where gamers contribute to shape the future of gaming. This is a survey for the gamers, by the gamers, to understand how India games.
             </p>
-            <Link href="/survey">
-              <Button className="text-lg px-8 py-6 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105">
+            <Link href="/survey" className="pointer-events-auto">
+              <Button className="text-base sm:text-lg px-8 sm:px-12 py-6 sm:py-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-stardom">
                 Take The Survey
               </Button>
             </Link>
@@ -83,7 +75,7 @@ export default function Home() {
             transition={{ repeat: Infinity, duration: 1.5 }}
           >
             <svg 
-              className="w-10 h-10 text-white opacity-70" 
+              className="w-10 h-10 sm:w-12 sm:h-12 text-white opacity-70" 
               fill="none" 
               stroke="currentColor" 
               viewBox="0 0 24 24" 

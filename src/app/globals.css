@@ -78,16 +78,27 @@ body {
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border;
   }
   body {
     @apply bg-background text-foreground;
   }
 }
 
+@font-face {
+  font-family: 'Stardom-Regular';
+  src: url('/fonts/Stardom-Regular.woff2') format('woff2'),
+       url('/fonts/Stardom-Regular.woff') format('woff'),
+       url('/fonts/Stardom-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
+  font-style: normal;
+}
+
 /* Hero Background Styles */
 .hero-bg {
-  @apply relative w-full h-screen overflow-hidden;
+  @apply relative min-h-screen w-full overflow-hidden;
+  background: linear-gradient(to bottom, #0f172a, #1e1b4b);
 }
 
 .hero-bg::before {
@@ -96,19 +107,36 @@ body {
 }
 
 .hero-bg-image {
-  @apply absolute inset-0 w-full h-full object-cover;
-  filter: brightness(0.9);
+  @apply object-cover w-full h-full;
 }
 
 .hero-bg-desktop {
-  @apply hidden md:block;
+  @apply hidden md:block absolute inset-0;
 }
 
 .hero-bg-mobile {
-  @apply block md:hidden;
+  @apply md:hidden absolute inset-0;
 }
 
 /* Glassmorphism Card Effect */
 .glassmorphism {
   @apply bg-white/10 backdrop-blur-lg border border-white/20;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e1b4b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #4f46e5;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #6366f1;
 } 
