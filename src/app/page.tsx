@@ -6,14 +6,9 @@ import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import {
-  Carousel,
-  CarouselContent,
-  CarouselItem,
-  CarouselNext,
-  CarouselPrevious,
-} from '@/components/ui/carousel';
 import { Boxes } from "@/components/ui/background-boxes";
+import InfiniteMovingCardsDemo from '@/components/infinite-moving-cards-demo';
+import { GlowingEffect } from '@/components/ui/glowing-effect';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -23,6 +18,81 @@ export default function Home() {
   }, []);
 
   if (!mounted) return null;
+
+  // Add a GamingCard component
+  const GamingCard = ({ icon, title, description, index }: { icon: string, title: string, description: string, index: number }) => {
+    return (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+        viewport={{ once: true }}
+        className="relative bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl transition-all duration-300"
+        style={{ minHeight: '250px' }}
+      >
+        <GlowingEffect
+          spread={15}
+          glow={true}
+          disabled={false}
+          proximity={100}
+          inactiveZone={0.01}
+          borderWidth={1.5}
+          variant="default"
+        />
+        <div className="relative z-10">
+          <div className="text-4xl mb-4">{icon}</div>
+          <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
+          <p className="text-gray-400">{description}</p>
+        </div>
+      </motion.div>
+    );
+  };
+
+  // Step card component for How It Works section
+  const StepCard = ({ number, title, description, index, hasArrow = false }: { 
+    number: string, 
+    title: string, 
+    description: string, 
+    index: number,
+    hasArrow?: boolean 
+  }) => {
+    return (
+      <motion.div
+        key={index}
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: index * 0.1 }}
+        viewport={{ once: true }}
+        className="relative"
+        style={{ minHeight: '200px' }}
+      >
+        <div className="relative bg-gray-800/30 backdrop-blur-sm p-8 rounded-2xl transition-all duration-300 h-full">
+          <GlowingEffect
+            spread={15}
+            glow={true}
+            disabled={false}
+            proximity={100}
+            inactiveZone={0.01}
+            borderWidth={1.5}
+            variant="default"
+          />
+          <div className="text-5xl font-bold text-purple-600/20 absolute -top-6 left-4 z-20">{number}</div>
+          <div className="pt-8 relative z-10">
+            <h3 className="text-xl font-bold text-white mb-3">{title}</h3>
+            <p className="text-gray-400">{description}</p>
+          </div>
+        </div>
+        {hasArrow && (
+          <div className="hidden md:block absolute top-1/2 right-0 transform translate-x-1/2 z-20">
+            <svg className="w-12 h-12 text-purple-600/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
+            </svg>
+          </div>
+        )}
+      </motion.div>
+    );
+  };
 
   return (
     <main className="flex min-h-screen flex-col items-center">
@@ -131,18 +201,7 @@ export default function Home() {
                 description: 'Share insights about your spending habits, streaming preferences, and gaming setup.'
               }
             ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700 hover:border-purple-500/50 transition-all duration-300"
-              >
-                <div className="text-4xl mb-4">{item.icon}</div>
-                <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                <p className="text-gray-400">{item.description}</p>
-              </motion.div>
+              <GamingCard key={index} icon={item.icon} title={item.title} description={item.description} index={index} />
             ))}
           </div>
         </div>
@@ -189,27 +248,14 @@ export default function Home() {
                 description: "Once we analyze the data, you'll get access to exclusive insights about Indian gamers."
               }
             ].map((item, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                viewport={{ once: true }}
-                className="relative"
-              >
-                <div className="text-5xl font-bold text-purple-600/20 absolute -top-6 left-0">{item.number}</div>
-                <div className="pt-8">
-                  <h3 className="text-xl font-bold text-white mb-3">{item.title}</h3>
-                  <p className="text-gray-400">{item.description}</p>
-                </div>
-                {index < 3 && (
-                  <div className="hidden md:block absolute top-1/2 right-0 transform translate-x-1/2">
-                    <svg className="w-12 h-12 text-purple-600/30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
-                    </svg>
-                  </div>
-                )}
-              </motion.div>
+              <StepCard 
+                key={index} 
+                number={item.number} 
+                title={item.title} 
+                description={item.description} 
+                index={index}
+                hasArrow={index < 3} 
+              />
             ))}
           </div>
         </div>
@@ -223,7 +269,7 @@ export default function Home() {
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
             viewport={{ once: true }}
-            className="text-center mb-16"
+            className="text-center mb-8"
           >
             <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">
               What Gamers Are <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600">Saying</span>
@@ -233,47 +279,9 @@ export default function Home() {
             </p>
           </motion.div>
 
-          <Carousel className="w-full max-w-4xl mx-auto">
-            <CarouselContent>
-              {[
-                {
-                  quote: "This survey actually asks the right questions! It&apos;s refreshing to see someone trying to understand Indian gamers properly.",
-                  name: "Rahul S.",
-                  title: "PC Gamer"
-                },
-                {
-                  quote: "I loved how comprehensive this survey is. It covers everything from basic preferences to deeper questions about gaming lifestyle.",
-                  name: "Priya M.",
-                  title: "Mobile Gaming Enthusiast"
-                },
-                {
-                  quote: "The survey was quick and easy to complete. I'm excited to see the results and how Indian gaming trends compare to global ones.",
-                  name: "Vikram J.",
-                  title: "Console Gamer"
-                }
-              ].map((testimonial, index) => (
-                <CarouselItem key={index} className="md:basis-1/1">
-                  <div className="bg-gray-800/50 backdrop-blur-sm p-8 rounded-2xl border border-gray-700">
-                    <div className="text-4xl text-purple-500 mb-4">&ldquo;</div>
-                    <p className="text-gray-300 text-lg mb-6">{testimonial.quote}</p>
-                    <div className="flex items-center">
-                      <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 flex items-center justify-center text-white font-bold text-xl">
-                        {testimonial.name.charAt(0)}
-                      </div>
-                      <div className="ml-4">
-                        <p className="text-white font-semibold">{testimonial.name}</p>
-                        <p className="text-gray-400 text-sm">{testimonial.title}</p>
-                      </div>
-                    </div>
-                  </div>
-                </CarouselItem>
-              ))}
-            </CarouselContent>
-            <div className="flex justify-center mt-8 gap-2">
-              <CarouselPrevious className="relative inset-0 translate-y-0 bg-purple-600 hover:bg-purple-700 text-white" />
-              <CarouselNext className="relative inset-0 translate-y-0 bg-purple-600 hover:bg-purple-700 text-white" />
-            </div>
-          </Carousel>
+          <div className="max-w-7xl mx-auto pb-8">
+            <InfiniteMovingCardsDemo />
+          </div>
         </div>
       </section>
 

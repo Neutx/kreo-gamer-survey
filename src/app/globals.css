@@ -139,4 +139,119 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: #6366f1;
+}
+
+/* Testimonial Card Override */
+.scroller li {
+  background: linear-gradient(to bottom, rgba(31, 41, 55, 0.8), rgba(17, 24, 39, 0.8)) !important;
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(75, 85, 99, 0.6);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+}
+
+.scroller li:hover {
+  border-color: rgba(139, 92, 246, 0.5);
+  transform: translateY(-2px);
+}
+
+/* Fix for Infinite Moving Cards Animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - 0.5rem));
+  }
+}
+
+.animate-scroll {
+  animation: scroll var(--animation-duration, 40s) var(--animation-direction, forwards) linear infinite;
+}
+
+.scroller {
+  mask-image: linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+}
+
+/* Glowing Effect Styles */
+@property --z-1 {
+  syntax: '<integer>';
+  initial-value: -1;
+  inherits: false;
+}
+
+.glow {
+  --z-1: -1;
+  z-index: 1;
+}
+
+[mask-composite="intersect"] {
+  -webkit-mask-composite: source-in;
+  mask-composite: intersect;
+}
+
+/* For WebKit browsers like Safari */
+@supports (-webkit-mask-composite: source-in) {
+  .glow::after {
+    -webkit-mask-composite: source-in !important;
+  }
+}
+
+/* Enhanced glowing effects */
+.glow::after {
+  animation: rotate 8s linear infinite;
+  z-index: 1;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+@keyframes rotate {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* For the case when mouse leaves the proximity but we want the glow to fade out smoothly */
+.glow::after {
+  transition: opacity 0.5s ease;
+}
+
+/* Custom card style for about section */
+.relative.bg-gray-800\/50 {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border: 3px solid rgba(45, 45, 45, 0.9) !important;
+  border-radius: 16px !important;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(5px) !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.relative.bg-gray-800\/50:hover {
+  border: 3px solid rgba(80, 60, 120, 0.8) !important;
+  transform: translateY(-2px);
+  transition: transform 0.3s ease, border 0.3s ease;
+}
+
+/* Custom card style for How It Works section */
+.relative .bg-gray-800\/30 {
+  background: rgba(0, 0, 0, 0.7) !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(5px) !important;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+.relative .bg-gray-800\/30:hover {
+  border: none !important;
+  transform: translateY(-2px);
+  transition: transform 0.3s ease;
 } 

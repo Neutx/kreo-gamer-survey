@@ -10,6 +10,7 @@ import { gamingFamilyUnder18MaleSchema } from '@/lib/survey-validation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Form,
   FormControl,
@@ -18,20 +19,13 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Checkbox } from '@/components/ui/checkbox';
 
 const perceptionOptions = [
   { value: 'waste_of_time', label: 'A waste of time' },
   { value: 'fun_hobby', label: 'A fun hobby' },
   { value: 'potential_career', label: 'A potential career' },
-  { value: 'dont_care', label: 'They don&apos;t care' },
+  { value: 'dont_care', label: "They don't care" },
 ];
 
 const reasonOptions = [
@@ -54,11 +48,74 @@ const characterOptions = [
   { value: 'custom', label: 'Custom avatar' },
 ];
 
-const yesNoOptions = [
-  { value: 'yes', label: 'Yes' },
-  { value: 'no', label: 'No' },
-  { value: 'sometimes', label: 'Sometimes' },
-];
+// Reusable component for horizontal yes/no/sometimes radio options
+function HorizontalYesNoRadio({ field }: { field: { value: string; onChange: (value: string) => void } }) {
+  return (
+    <RadioGroup
+      onValueChange={field.onChange}
+      value={field.value}
+      className="space-y-0"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <FormItem className="flex items-center space-x-3 space-y-0">
+          <FormControl>
+            <RadioGroupItem value="yes" />
+          </FormControl>
+          <FormLabel className="font-normal">Yes</FormLabel>
+        </FormItem>
+        
+        <FormItem className="flex items-center space-x-3 space-y-0">
+          <FormControl>
+            <RadioGroupItem value="no" />
+          </FormControl>
+          <FormLabel className="font-normal">No</FormLabel>
+        </FormItem>
+        
+        <FormItem className="flex items-center space-x-3 space-y-0">
+          <FormControl>
+            <RadioGroupItem value="sometimes" />
+          </FormControl>
+          <FormLabel className="font-normal">Sometimes</FormLabel>
+        </FormItem>
+      </div>
+    </RadioGroup>
+  );
+}
+
+// Generic horizontal radio component for other option sets
+type Option = {
+  value: string;
+  label: string;
+};
+
+function HorizontalRadio({ 
+  field, 
+  options 
+}: { 
+  field: { value: string; onChange: (value: string) => void }; 
+  options: Option[];
+}) {
+  return (
+    <RadioGroup
+      onValueChange={field.onChange}
+      value={field.value}
+      className="space-y-2"
+    >
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+        {options.map(option => (
+          <FormItem key={option.value} className="flex items-center space-x-3 space-y-0">
+            <FormControl>
+              <RadioGroupItem value={option.value} />
+            </FormControl>
+            <FormLabel className="font-normal">
+              {option.label}
+            </FormLabel>
+          </FormItem>
+        ))}
+      </div>
+    </RadioGroup>
+  );
+}
 
 export default function GamingFamilyUnder18Male() {
   const { updateResponses, goToNextSection, goToPreviousSection, responses } = useSurvey();
@@ -128,22 +185,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="family_perception"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>What do your parents think about your gaming?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select perception" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {perceptionOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalRadio field={field} options={perceptionOptions} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -191,22 +237,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="character_preference"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>In-game character preference?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your preference" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {characterOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalRadio field={field} options={characterOptions} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -216,22 +251,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="gender_bias"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>Do you think gaming has a gender bias? Do you want to talk about it?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select an option" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {biasOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalRadio field={field} options={biasOptions} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -261,22 +285,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="primary_reason"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>Primary reason to play games?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select your primary reason" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {reasonOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalRadio field={field} options={reasonOptions} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -286,22 +299,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="parent_gaming_rules"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>Do your parents have specific rules about gaming?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select an option" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {yesNoOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalYesNoRadio field={field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -311,22 +313,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="parents_play_games"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>Do your parents play games?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select an option" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {yesNoOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalYesNoRadio field={field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -336,22 +327,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="gaming_with_siblings"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>How often do you game with your siblings?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select frequency" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {yesNoOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalYesNoRadio field={field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -361,22 +341,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="homework_compromise"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>Do you have to compromise between gaming and homework?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select an option" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {yesNoOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalYesNoRadio field={field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -386,22 +355,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="friends_parents_rules"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>Do your friends&apos; parents have different gaming rules?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select an option" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {yesNoOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalYesNoRadio field={field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -411,22 +369,11 @@ export default function GamingFamilyUnder18Male() {
               control={form.control}
               name="gaming_arguments"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className="space-y-3">
                   <FormLabel>Do you have arguments about gaming with family?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select an option" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {yesNoOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <HorizontalYesNoRadio field={field} />
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -437,10 +384,16 @@ export default function GamingFamilyUnder18Male() {
                 type="button"
                 variant="outline"
                 onClick={goToPreviousSection}
+                className="w-32"
               >
-                Previous
+                Previous Level
               </Button>
-              <Button type="submit">Next</Button>
+              <Button 
+                type="submit"
+                className="w-32 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
+              >
+                Level Up!
+              </Button>
             </div>
           </form>
         </Form>
