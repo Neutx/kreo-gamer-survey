@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Form,
   FormControl,
@@ -136,93 +137,76 @@ export default function GamingLifestyle() {
   const { updateResponses, goToPreviousSection, responses, setCurrentSection } = useSurvey();
   const [filteredActivity, setFilteredActivity] = useState(activityOptions);
 
-  const savedData = (responses.gaming_lifestyle || {}) as {
-    streams_content?: boolean;
-    platform_handles?: string[];
-    merchandise_spending?: string;
-    gaming_events?: string[];
-    follows_esports?: boolean;
-    favorite_esports?: string[];
-    gaming_influencers?: string[];
-    gaming_communities?: string[];
-    gaming_subscriptions?: string[];
-    gaming_news_sources?: string[];
-    interest?: string;
-    other_interests?: string;
-    customised_peripherals?: string[];
-    gaming_food?: string;
-    gaming_drink?: string;
-    watch_content?: string[];
-    fav_creator?: string;
-    esp_participation?: string[];
-    is_content_c?: string[];
-    in_game_spends?: string[];
-    merch_spends?: string[];
-    collectibles?: string[];
+  const savedData = responses?.gaming_lifestyle || {
+    customised_peripherals: "",
+    watch_content: "",
+    content_platforms: [],
+    esp_participation: "",
+    is_content_c: "",
+    in_game_spends: "",
+    merch_spends: "",
+    collectibles: "",
+    platform_handles: [],
+    platform_names: [],
+    peripherals_customized: [],
+    merchandise_spending: [],
+    collectibles_owned: [],
+    esports_participation: [],
+    game_spending: [],
+    streaming_platforms: []
   };
 
   const form = useForm<z.infer<typeof gamingLifestyleSchema>>({
     resolver: zodResolver(gamingLifestyleSchema),
     defaultValues: {
-      streams_content: savedData.streams_content || false,
+      customised_peripherals: savedData.customised_peripherals || "",
+      watch_content: savedData.watch_content || "",
+      content_platforms: savedData.content_platforms || [],
+      esp_participation: savedData.esp_participation || "",
+      is_content_c: savedData.is_content_c || "",
+      in_game_spends: savedData.in_game_spends || "",
+      merch_spends: savedData.merch_spends || "",
+      collectibles: savedData.collectibles || "",
       platform_handles: savedData.platform_handles || [],
-      merchandise_spending: savedData.merchandise_spending || '',
-      gaming_events: savedData.gaming_events || [],
-      follows_esports: savedData.follows_esports || false,
-      favorite_esports: savedData.favorite_esports || [],
-      gaming_influencers: savedData.gaming_influencers || [],
-      gaming_communities: savedData.gaming_communities || [],
-      gaming_subscriptions: savedData.gaming_subscriptions || [],
-      gaming_news_sources: savedData.gaming_news_sources || [],
-      interest: savedData.interest || '',
-      other_interests: savedData.other_interests || '',
-      customised_peripherals: savedData.customised_peripherals || [],
-      gaming_food: savedData.gaming_food || '',
-      gaming_drink: savedData.gaming_drink || '',
-      watch_content: savedData.watch_content || [],
-      fav_creator: savedData.fav_creator || '',
-      esp_participation: savedData.esp_participation || [],
-      is_content_c: savedData.is_content_c || [],
-      in_game_spends: savedData.in_game_spends || [],
-      merch_spends: savedData.merch_spends || [],
-      collectibles: savedData.collectibles || [],
-    },
+      platform_names: savedData.platform_names || [],
+      peripherals_customized: savedData.peripherals_customized || [],
+      merchandise_spending: savedData.merchandise_spending || [],
+      collectibles_owned: savedData.collectibles_owned || [],
+      esports_participation: savedData.esports_participation || [],
+      game_spending: savedData.game_spending || [],
+      streaming_platforms: savedData.streaming_platforms || []
+    }
   });
 
-  function onSubmit(values: z.infer<typeof gamingLifestyleSchema>) {
+  // Function to handle form submission
+  const handleSubmit = (values: z.infer<typeof gamingLifestyleSchema>) => {
     console.log('Form submitted with values:', values);
-    try {
-      updateResponses('gaming_lifestyle', values);
-      
-      // Get user's age and gender from demographics
-      const age = responses.demographics?.age;
-      const gender = responses.demographics?.gender;
-      
-      console.log('User demographics:', { age, gender });
-      
-      // Determine the correct family section
-      let nextSection: SurveySection;
-      
-      if (age === 'Under 18') {
-        nextSection = gender?.toLowerCase() === 'female' 
-          ? 'gaming_family_under18_female' 
-          : 'gaming_family_under18_male';
-      } else if (age === '18-24') {
-        nextSection = gender?.toLowerCase() === 'female'
-          ? 'gaming_family_18to24_female'
-          : 'gaming_family_18to24_male';
-      } else {
-        nextSection = gender?.toLowerCase() === 'female'
-          ? 'gaming_family_25plus_female'
-          : 'gaming_family_25plus_male';
-      }
-      
-      console.log('Navigating to family section:', nextSection);
-      setCurrentSection(nextSection);
-    } catch (error) {
-      console.error('Error in form submission:', error);
+    updateResponses('gaming_lifestyle', values);
+    
+    // Get user's age and gender from demographics
+    const age = responses.demographics?.age;
+    const gender = responses.demographics?.gender;
+    
+    // Determine the correct family section
+    let nextSection: SurveySection;
+    
+    if (age === 'Under 18') {
+      nextSection = gender?.toLowerCase() === 'female' 
+        ? 'gaming_family_under18_female' 
+        : 'gaming_family_under18_male';
+    } else if (age === '18-24') {
+      nextSection = gender?.toLowerCase() === 'female'
+        ? 'gaming_family_18to24_female'
+        : 'gaming_family_18to24_male';
+    } else {
+      nextSection = gender?.toLowerCase() === 'female'
+        ? 'gaming_family_25plus_female'
+        : 'gaming_family_25plus_male';
     }
-  }
+    
+    console.log('Navigating to family section:', nextSection);
+    setCurrentSection(nextSection);
+  };
 
   return (
     <motion.div
@@ -246,7 +230,7 @@ export default function GamingLifestyle() {
         </motion.div>
 
         <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
             <div className="space-y-6">
               <FormField
                 control={form.control}
@@ -315,38 +299,27 @@ export default function GamingLifestyle() {
             <FormField
               control={form.control}
               name="customised_peripherals"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>Do you use customised peripherals of topics you are interested in? Would you like to?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {customPerOptions.map((customize) => (
-                      <FormField
-                        key={customize.id}
-                        control={form.control}
-                        name="customised_peripherals"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(customize.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, customize.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== customize.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {customize.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {customPerOptions.map((option) => (
+                        <FormItem key={option.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={option.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {option.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -405,38 +378,27 @@ export default function GamingLifestyle() {
             <FormField
               control={form.control}
               name="watch_content"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>How much time do you spend watching gaming content?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {contentwatchOptions.map((customize) => (
-                      <FormField
-                        key={customize.id}
-                        control={form.control}
-                        name="watch_content"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(customize.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, customize.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== customize.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {customize.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {contentwatchOptions.map((option) => (
+                        <FormItem key={option.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={option.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {option.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -463,38 +425,27 @@ export default function GamingLifestyle() {
             <FormField
               control={form.control}
               name="esp_participation"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>Have you ever participated in an eSports tournament?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {esportpartOptions.map((customize) => (
-                      <FormField
-                        key={customize.value}
-                        control={form.control}
-                        name="esp_participation"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(customize.value)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, customize.value]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== customize.value));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {customize.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {esportpartOptions.map((option) => (
+                        <FormItem key={option.value} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={option.value} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {option.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -503,38 +454,27 @@ export default function GamingLifestyle() {
             <FormField
               control={form.control}
               name="is_content_c"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>Do you stream or create gaming content?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {contentcreatorOptions.map((customize) => (
-                      <FormField
-                        key={customize.id}
-                        control={form.control}
-                        name="is_content_c"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(customize.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, customize.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== customize.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {customize.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {contentcreatorOptions.map((option) => (
+                        <FormItem key={option.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={option.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {option.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -542,7 +482,7 @@ export default function GamingLifestyle() {
 
             <FormField
               control={form.control}
-              name="watch_content"
+              name="content_platforms"
               render={() => (
                 <FormItem>
                   <FormLabel>Which platforms do you use for streaming/watching gaming content?</FormLabel>
@@ -551,7 +491,7 @@ export default function GamingLifestyle() {
                       <FormField
                         key={customize.id}
                         control={form.control}
-                        name="watch_content"
+                        name="content_platforms"
                         render={({ field }) => (
                           <FormItem className="flex items-center space-x-3">
                             <FormControl>
@@ -583,38 +523,27 @@ export default function GamingLifestyle() {
             <FormField
               control={form.control}
               name="in_game_spends"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>How much do you spend on in-game purchases per month?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {igsOptions.map((customize) => (
-                      <FormField
-                        key={customize.id}
-                        control={form.control}
-                        name="in_game_spends"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(customize.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, customize.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== customize.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {customize.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {igsOptions.map((option) => (
+                        <FormItem key={option.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={option.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {option.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -623,38 +552,27 @@ export default function GamingLifestyle() {
             <FormField
               control={form.control}
               name="merch_spends"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>How much do you spend on gaming merchandise (apparel, collectibles, accessories) per month or 2 months?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {merchspendsOptions.map((customize) => (
-                      <FormField
-                        key={customize.id}
-                        control={form.control}
-                        name="merch_spends"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(customize.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, customize.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== customize.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {customize.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {merchspendsOptions.map((option) => (
+                        <FormItem key={option.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={option.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {option.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -663,38 +581,27 @@ export default function GamingLifestyle() {
             <FormField
               control={form.control}
               name="collectibles"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>Do you collect gaming-related items (cards, figurines, posters, in-game collectibles)?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {collectOptions.map((customize) => (
-                      <FormField
-                        key={customize.id}
-                        control={form.control}
-                        name="collectibles"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(customize.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, customize.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== customize.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {customize.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {collectOptions.map((option) => (
+                        <FormItem key={option.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={option.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {option.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -1039,13 +946,7 @@ export default function GamingLifestyle() {
                 Previous Level
               </Button>
               <Button 
-                type="button"
-                onClick={() => {
-                  console.log('Button clicked');
-                  const values = form.getValues();
-                  console.log('Form values:', values);
-                  onSubmit(values);
-                }}
+                type="submit"
                 className="w-32 bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700"
               >
                 Level Up!

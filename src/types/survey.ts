@@ -61,10 +61,27 @@ export interface SurveyData {
     years_gaming: string;
   };
   gaming_lifestyle: {
-    streams_content: boolean;
+    customised_peripherals: string;
+    watch_content: string;
+    content_platforms: string[];
+    esp_participation: string;
+    is_content_c: string;
+    in_game_spends: string;
+    merch_spends: string;
+    collectibles: string;
     platform_handles?: string[];
-    merchandise_spending: string;
-    gaming_events: string[];
+    platform_names?: string[];
+    peripherals_customized?: string[];
+    merchandise_spending?: string[];
+    collectibles_owned?: string[];
+    esports_participation?: string[];
+    game_spending?: string[];
+    streaming_platforms?: string[];
+    gaming_food?: string;
+    gaming_drink?: string;
+    fav_creator?: string;
+    interest?: string;
+    other_interests?: string;
   };
   gaming_family_under18_male?: {
     family_perception: string;

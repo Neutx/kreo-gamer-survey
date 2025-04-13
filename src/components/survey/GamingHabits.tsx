@@ -10,6 +10,7 @@ import { gamingHabitsSchema } from '@/lib/survey-validation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import {
   Form,
   FormControl,
@@ -60,11 +61,11 @@ export default function GamingHabits() {
   const form = useForm<FormValues>({
     resolver: zodResolver(gamingHabitsSchema),
     defaultValues: {
-      gaming_start: savedData.gaming_start || [],
-      gaming_frequency: savedData.gaming_frequency || [],
-      game_type: savedData.game_type || [],
+      gaming_start: savedData.gaming_start || '',
+      gaming_frequency: savedData.gaming_frequency || '',
+      game_type: savedData.game_type || '',
       game_buy: savedData.game_buy || [],
-      mod_controller: savedData.mod_controller || [],
+      mod_controller: savedData.mod_controller || '',
     },
   });
 
@@ -99,38 +100,27 @@ export default function GamingHabits() {
             <FormField
               control={form.control}
               name="gaming_start"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>When did you first start gaming?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {gameStart.map((slot) => (
-                      <FormField
-                        key={slot.id}
-                        control={form.control}
-                        name="gaming_start"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(slot.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, slot.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== slot.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {slot.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {gameStart.map((slot) => (
+                        <FormItem key={slot.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={slot.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {slot.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -139,38 +129,27 @@ export default function GamingHabits() {
             <FormField
               control={form.control}
               name="gaming_frequency"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>How often do you play games?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {frequencyOptions.map((slot) => (
-                      <FormField
-                        key={slot.id}
-                        control={form.control}
-                        name="gaming_frequency"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(slot.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, slot.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== slot.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {slot.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {frequencyOptions.map((slot) => (
+                        <FormItem key={slot.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={slot.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {slot.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -179,38 +158,27 @@ export default function GamingHabits() {
             <FormField
               control={form.control}
               name="game_type"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>Do you prefer single-player or multiplayer games?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {gType.map((slot) => (
-                      <FormField
-                        key={slot.id}
-                        control={form.control}
-                        name="game_type"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(slot.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, slot.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== slot.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {slot.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {gType.map((slot) => (
+                        <FormItem key={slot.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={slot.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {slot.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -259,38 +227,27 @@ export default function GamingHabits() {
             <FormField
               control={form.control}
               name="mod_controller"
-              render={() => (
-                <FormItem>
+              render={({ field }) => (
+                <FormItem className="space-y-3">
                   <FormLabel>Do you use modified/experimental gaming controllers?</FormLabel>
-                  <div className="grid grid-cols-2 gap-4 mt-2">
-                    {modPref.map((slot) => (
-                      <FormField
-                        key={slot.id}
-                        control={form.control}
-                        name="mod_controller"
-                        render={({ field }) => (
-                          <FormItem className="flex items-center space-x-3">
-                            <FormControl>
-                              <Checkbox
-                                checked={field.value?.includes(slot.id)}
-                                onCheckedChange={(checked) => {
-                                  const value = field.value || [];
-                                  if (checked) {
-                                    field.onChange([...value, slot.id]);
-                                  } else {
-                                    field.onChange(value.filter((val) => val !== slot.id));
-                                  }
-                                }}
-                              />
-                            </FormControl>
-                            <FormLabel className="font-normal">
-                              {slot.label}
-                            </FormLabel>
-                          </FormItem>
-                        )}
-                      />
-                    ))}
-                  </div>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {modPref.map((slot) => (
+                        <FormItem key={slot.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={slot.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {slot.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}

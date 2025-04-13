@@ -102,8 +102,12 @@ export default function GamingFamily18to24Male() {
   });
 
   function onSubmit(values: z.infer<typeof gamingFamily18to24MaleSchema>) {
-    updateResponses('gaming_family_18to24_male', values);
-    goToNextSection();
+    try {
+      updateResponses('gaming_family_18to24_male', values);
+      goToNextSection();
+    } catch (error) {
+      console.error('[GamingFamily18to24Male] Error in onSubmit:', error);
+    }
   }
 
   return (
