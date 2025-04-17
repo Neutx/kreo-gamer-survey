@@ -11,6 +11,8 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Form,
   FormControl,
@@ -49,26 +51,16 @@ const futuregamingOptions = [
 ];
 
 
+type FutureGamingFormType = z.infer<typeof futureGamingSchema>;
 
 
 export default function FutureGaming() {
   const { updateResponses, goToPreviousSection, responses } = useSurvey();
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const savedData = (responses.future_gaming || {}) as {
-    metaverse_interest?: string;
-    vr_adoption?: string;
-    cloud_gaming?: string;
-    sustainability?: string;
-    ai_in_games?: string;
-    blockchain_gaming?: string;
-    subscription_services?: string;
-    future_spending?: string;
-    future_gaming?: string[];
-    additional_feedback?: string;
-  };
+  const savedData = (responses.future_gaming || {}) as Partial<FutureGamingFormType>;
 
-  const form = useForm<z.infer<typeof futureGamingSchema>>({
+  const form = useForm<FutureGamingFormType>({
     resolver: zodResolver(futureGamingSchema),
     defaultValues: {
       metaverse_interest: savedData.metaverse_interest || '',
@@ -81,10 +73,15 @@ export default function FutureGaming() {
       future_spending: savedData.future_spending || '',
       future_gaming: savedData.future_gaming || [],
       additional_feedback: savedData.additional_feedback || '',
+      referred: savedData.referred || '',
+      referrer_name: savedData.referrer_name || '',
     },
   });
 
-  function onSubmit(values: z.infer<typeof futureGamingSchema>) {
+  // Watch the referred field to conditionally show the referrer name input
+  const referred = form.watch('referred');
+
+  function onSubmit(values: FutureGamingFormType) {
     console.log('Submitting final form', values);
     try {
       updateResponses('future_gaming', values);
@@ -187,6 +184,60 @@ export default function FutureGaming() {
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="referred"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Were you referred by someone?</FormLabel>
+                  <FormDescription className="text-gray-400">
+                    This question is optional
+                  </FormDescription>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                      className="flex flex-row space-x-4"
+                    >
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem value="yes" />
+                        </FormControl>
+                        <FormLabel className="font-normal">Yes</FormLabel>
+                      </FormItem>
+                      <FormItem className="flex items-center space-x-2">
+                        <FormControl>
+                          <RadioGroupItem value="no" />
+                        </FormControl>
+                        <FormLabel className="font-normal">No</FormLabel>
+                      </FormItem>
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {referred === 'yes' && (
+              <FormField
+                control={form.control}
+                name="referrer_name"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Name of the person who referred you</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter their name"
+                        className="bg-background/50"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <FormField
               control={form.control}

@@ -233,4 +233,6 @@ export const futureGamingSchema = z.object({
   future_spending: z.string({ required_error: 'Please select your future spending plans' }),
   future_gaming: z.array(z.string()).min(1, { message: 'Please select at least one option' }),
   additional_feedback: z.string().optional(),
+  referred: z.string().optional(),
+  referrer_name: z.string().optional(),
 }); 
