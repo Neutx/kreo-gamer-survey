@@ -68,14 +68,8 @@ export default function GamingFamily18to24Male() {
     gaming_impact?: string;
     character_preference?: string;
     gender_bias?: string;
+    gender_bias_explanation?: string;
     primary_reason?: string;
-    social_relationships?: string;
-    game_with_roommates?: string;
-    balance_gaming?: string;
-    influence_friends?: string;
-    college_events?: string;
-    replace_social?: string;
-    gaming_career?: string;
     old_generation?: string;
     academic_networking?: string;
   };
@@ -88,14 +82,8 @@ export default function GamingFamily18to24Male() {
       gaming_impact: savedData.gaming_impact || '',
       character_preference: savedData.character_preference || '',
       gender_bias: savedData.gender_bias || '',
+      gender_bias_explanation: savedData.gender_bias_explanation || '',
       primary_reason: savedData.primary_reason || '',
-      social_relationships: savedData.social_relationships || '',
-      game_with_roommates: savedData.game_with_roommates || '',
-      balance_gaming: savedData.balance_gaming || '',
-      influence_friends: savedData.influence_friends || '',
-      college_events: savedData.college_events || '',
-      replace_social: savedData.replace_social || '',
-      gaming_career: savedData.gaming_career || '',
       old_generation: savedData.old_generation || '',
       academic_networking: savedData.academic_networking || '',
     },

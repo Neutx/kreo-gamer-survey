@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import * as z from 'zod';
 import { useSurvey } from '@/context/SurveyContext';
 import { futureGamingSchema } from '@/lib/survey-validation';
@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Textarea } from '@/components/ui/textarea';
 import { Input } from '@/components/ui/input';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import ReactSelect from 'react-select';
 import {
   Form,
   FormControl,
@@ -38,9 +39,77 @@ const sustainableOptions = [
   { value: 'no', label: 'No' },
 ];
 
-
-
-
+const productOptions = [
+  { value: 'Actus V2 Gaming Chair', label: 'Actus V2 Gaming Chair' },
+  { value: 'Anzu White 52g Wireless Gaming Mouse', label: 'Anzu White 52g Wireless Gaming Mouse' },
+  { value: 'Arctik Laptop Cooler', label: 'Arctik Laptop Cooler' },
+  { value: 'Beluga Gaming Headphones', label: 'Beluga Gaming Headphones' },
+  { value: 'Chimera Red Wireless Gaming Mouse', label: 'Chimera Red Wireless Gaming Mouse' },
+  { value: 'Chimera White Wireless Gaming Mouse', label: 'Chimera White Wireless Gaming Mouse' },
+  { value: 'Chimera Wireless Gaming Mouse', label: 'Chimera Wireless Gaming Mouse' },
+  { value: 'Cirrus Gaming Chair', label: 'Cirrus Gaming Chair' },
+  { value: 'Cliff Igneous Gaming MousePad', label: 'Cliff Igneous Gaming MousePad' },
+  { value: 'Extendable Desk Stand', label: 'Extendable Desk Stand' },
+  { value: 'Frost Mobile Cooler', label: 'Frost Mobile Cooler' },
+  { value: 'GoPod- Premium Gorilla Grip Octopus Tripod', label: 'GoPod- Premium Gorilla Grip Octopus Tripod' },
+  { value: 'GoRec Professional Wireless Mic', label: 'GoRec Professional Wireless Mic' },
+  { value: 'Halo 12" Premium Ring Light', label: 'Halo 12" Premium Ring Light' },
+  { value: 'Halo 12" Premium Ring Light + Tripod (Combo)', label: 'Halo 12" Premium Ring Light + Tripod (Combo)' },
+  { value: 'Halo 18" Premium Ring Light', label: 'Halo 18" Premium Ring Light' },
+  { value: 'Halo 18" Premium Ring Light + Tripod', label: 'Halo 18" Premium Ring Light + Tripod' },
+  { value: 'Hawk Gaming Mouse - Black', label: 'Hawk Gaming Mouse - Black' },
+  { value: 'Hawk White Gaming Mouse', label: 'Hawk White Gaming Mouse' },
+  { value: 'Hidden Leaf Mousepad', label: 'Hidden Leaf Mousepad' },
+  { value: 'Hive All Black RGB Wired Gaming Keyboard', label: 'Hive All Black RGB Wired Gaming Keyboard' },
+  { value: 'Hive All White RGB Wired Gaming Keyboard', label: 'Hive All White RGB Wired Gaming Keyboard' },
+  { value: 'Hive Black - Purple Wired Gaming Keyboard', label: 'Hive Black - Purple Wired Gaming Keyboard' },
+  { value: 'Hive Full-Size All Black Wired Gaming Keyboard', label: 'Hive Full-Size All Black Wired Gaming Keyboard' },
+  { value: 'Hive Full-Size All White Wired Gaming Keyboard', label: 'Hive Full-Size All White Wired Gaming Keyboard' },
+  { value: 'Hive Full-Size Black - Purple Wired Gaming Keyboard', label: 'Hive Full-Size Black - Purple Wired Gaming Keyboard' },
+  { value: 'Hive Full-Size White - Purple Wired Gaming Keyboard', label: 'Hive Full-Size White - Purple Wired Gaming Keyboard' },
+  { value: 'Hive Lite RGB Membrane Keyboard', label: 'Hive Lite RGB Membrane Keyboard' },
+  { value: 'Hive White-Purple Wired Gaming Keyboard', label: 'Hive White-Purple Wired Gaming Keyboard' },
+  { value: 'Hydra Wired Gaming Earphones', label: 'Hydra Wired Gaming Earphones' },
+  { value: 'Ikarus Black 55g Wireless Gaming Mouse', label: 'Ikarus Black 55g Wireless Gaming Mouse' },
+  { value: 'Ikarus White 55g Wireless Gaming Mouse', label: 'Ikarus White 55g Wireless Gaming Mouse' },
+  { value: 'Kast Black Dynamic Mic + Rod Pro Boom Arm Combo', label: 'Kast Black Dynamic Mic + Rod Pro Boom Arm Combo' },
+  { value: 'Kast Black Dynamic Microphone', label: 'Kast Black Dynamic Microphone' },
+  { value: 'Kast Dynamic Mic + Rod Pro Boom Arm Combo', label: 'Kast Dynamic Mic + Rod Pro Boom Arm Combo' },
+  { value: 'Kast Dynamic Microphone', label: 'Kast Dynamic Microphone' },
+  { value: 'Kast White Dynamic Microphone', label: 'Kast White Dynamic Microphone' },
+  { value: 'Lynx Capture Card', label: 'Lynx Capture Card' },
+  { value: 'Mirage Wireless RGB Gaming Controller Gamepad', label: 'Mirage Wireless RGB Gaming Controller Gamepad' },
+  { value: 'Mouse Switches Pack of 3', label: 'Mouse Switches Pack of 3' },
+  { value: 'Naruto Mousepad', label: 'Naruto Mousepad' },
+  { value: 'Owl 4K Webcam', label: 'Owl 4K Webcam' },
+  { value: 'Owl Full HD Streaming Webcam', label: 'Owl Full HD Streaming Webcam' },
+  { value: 'Pass Through ABS Keycaps', label: 'Pass Through ABS Keycaps' },
+  { value: 'Pegasus 49g Ultra-Light Wired Gaming Mouse', label: 'Pegasus 49g Ultra-Light Wired Gaming Mouse' },
+  { value: 'Pegasus 58g Ultra-Light Wireless Black Gaming Mouse', label: 'Pegasus 58g Ultra-Light Wireless Black Gaming Mouse' },
+  { value: 'Pegasus 58g Ultra-Light Wireless White Gaming Mouse', label: 'Pegasus 58g Ultra-Light Wireless White Gaming Mouse' },
+  { value: 'Pop Filter', label: 'Pop Filter' },
+  { value: 'Propel Gaming Mousepad', label: 'Propel Gaming Mousepad' },
+  { value: 'Rec Premium Condenser Microphone with ANC', label: 'Rec Premium Condenser Microphone with ANC' },
+  { value: 'RecRod Condenser Mic + Boom arm Combo', label: 'RecRod Condenser Mic + Boom arm Combo' },
+  { value: 'Rod Boom arm/ Mic Stand', label: 'Rod Boom arm/ Mic Stand' },
+  { value: 'Rod Pro Boom Arm/ Mic Stand', label: 'Rod Pro Boom Arm/ Mic Stand' },
+  { value: 'STAYble 1.6 meter Premium Tripod Stand', label: 'STAYble 1.6 meter Premium Tripod Stand' },
+  { value: 'STAYble 1.9 meter Premium Tripod Stand', label: 'STAYble 1.9 meter Premium Tripod Stand' },
+  { value: 'Sakura Mousepad', label: 'Sakura Mousepad' },
+  { value: 'Sasuke Mousepad', label: 'Sasuke Mousepad' },
+  { value: 'Sk Rossi Premium Oversized T-Shirt', label: 'Sk Rossi Premium Oversized T-Shirt' },
+  { value: 'Slab Key Light', label: 'Slab Key Light' },
+  { value: 'Sonik Gaming Mic', label: 'Sonik Gaming Mic' },
+  { value: 'Sonik Gaming Mic + Rod Pro Boom Arm Combo', label: 'Sonik Gaming Mic + Rod Pro Boom Arm Combo' },
+  { value: 'Stayble Pro Video Tripod', label: 'Stayble Pro Video Tripod' },
+  { value: 'Swarm All Black Wireless Gaming Keyboard', label: 'Swarm All Black Wireless Gaming Keyboard' },
+  { value: 'Swarm All White Wireless Gaming Keyboard', label: 'Swarm All White Wireless Gaming Keyboard' },
+  { value: 'Swarm Barebones Customized Keyboard', label: 'Swarm Barebones Customized Keyboard' },
+  { value: 'Swarm Black Purple Wireless Gaming Keyboard', label: 'Swarm Black Purple Wireless Gaming Keyboard' },
+  { value: 'Swarm White Purple Wireless Gaming Keyboard', label: 'Swarm White Purple Wireless Gaming Keyboard' },
+  { value: 'Tundra Laptop Cooler', label: 'Tundra Laptop Cooler' },
+  { value: 'Wasp- Mobile Gaming Trigger', label: 'Wasp- Mobile Gaming Trigger' },
+];
 
 const futuregamingOptions = [
   { value: 'VR/AR', label: 'VR/AR gaming' },
@@ -63,18 +132,12 @@ export default function FutureGaming() {
   const form = useForm<FutureGamingFormType>({
     resolver: zodResolver(futureGamingSchema),
     defaultValues: {
-      metaverse_interest: savedData.metaverse_interest || '',
-      vr_adoption: savedData.vr_adoption || '',
-      cloud_gaming: savedData.cloud_gaming || '',
       sustainability: savedData.sustainability || '',
-      ai_in_games: savedData.ai_in_games || '',
-      blockchain_gaming: savedData.blockchain_gaming || '',
-      subscription_services: savedData.subscription_services || '',
-      future_spending: savedData.future_spending || '',
       future_gaming: savedData.future_gaming || [],
       additional_feedback: savedData.additional_feedback || '',
       referred: savedData.referred || '',
       referrer_name: savedData.referrer_name || '',
+      favorite_product: savedData.favorite_product || '',
     },
   });
 
@@ -159,6 +222,38 @@ export default function FutureGaming() {
               )}
             />
             
+            <FormField
+              control={form.control}
+              name="favorite_product"
+              render={() => (
+                <FormItem>
+                  <FormLabel>Which Kreo product would you like to win?</FormLabel>
+                  <p className="text-sm text-gray-500 mb-2">
+                    Not sure what to get? Visit our website <a href="https://kreo-tech.com" target="_blank" rel="noopener noreferrer" className="text-blue-500 hover:underline">kreo-tech.com</a>
+                  </p>
+                  <FormControl>
+                    <Controller
+                      name="favorite_product"
+                      control={form.control}
+                      render={({ field }) => (
+                        <ReactSelect
+                          inputId="favorite_product"
+                          options={productOptions}
+                          value={productOptions.find(option => option.value === field.value)}
+                          onChange={(option) => field.onChange(option ? option.value : '')}
+                          placeholder="Search for a product..."
+                          classNamePrefix="react-select"
+                          className="react-select-container"
+                          isClearable
+                          isSearchable
+                        />
+                      )}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             
             <FormField
               control={form.control}

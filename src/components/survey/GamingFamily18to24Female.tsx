@@ -10,6 +10,7 @@ import { gamingFamily18to24FemaleSchema } from '@/lib/survey-validation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Form,
   FormControl,
@@ -46,22 +47,11 @@ const reasonOptions = [
   { value: 'competitive', label: 'Competitive gaming' },
 ];
 
-
-
 const biasOptions = [
   { value: 'yes', label: 'Yes' },
   { value: 'no', label: 'No' },
   { value: 'yes_can_talk', label: 'Yes, and I want to share my thoughts' },
 ];
-
-
-const oldgenOptions = [
-  { value: 'yes', label: 'Yes' },
-  { value: 'no', label: 'No' },
-  { value: 'sometimes', label: 'Sometimes' },
-];
-
-
 
 const yesNoOptions = [
   { value: 'yes', label: 'Yes' },
@@ -69,7 +59,36 @@ const yesNoOptions = [
   { value: 'sometimes', label: 'Sometimes' },
 ];
 
+const supportOptions = [
+  { value: 'very_supportive', label: 'Very supportive' },
+  { value: 'somewhat_supportive', label: 'Somewhat supportive' },
+  { value: 'neutral', label: 'Neutral' },
+  { value: 'somewhat_negative', label: 'Somewhat negative' },
+  { value: 'very_negative', label: 'Very negative' },
+];
 
+const frequencyOptions = [
+  { value: 'always', label: 'Always' },
+  { value: 'often', label: 'Often' },
+  { value: 'sometimes', label: 'Sometimes' },
+  { value: 'rarely', label: 'Rarely' },
+  { value: 'never', label: 'Never' },
+];
+
+const representationOptions = [
+  { value: 'well_represented', label: 'Well represented' },
+  { value: 'somewhat_represented', label: 'Somewhat represented' },
+  { value: 'neutral', label: 'Neutral' },
+  { value: 'somewhat_underrepresented', label: 'Somewhat underrepresented' },
+  { value: 'very_underrepresented', label: 'Very underrepresented' },
+];
+
+const reactionOptions = [
+  { value: 'supportive', label: 'Supportive' },
+  { value: 'surprised', label: 'Surprised' },
+  { value: 'neutral', label: 'Neutral' },
+  { value: 'negative', label: 'Negative' },
+];
 
 export default function GamingFamily18to24Female() {
   const { updateResponses, goToPreviousSection, responses, setCurrentSection } = useSurvey();
@@ -80,6 +99,7 @@ export default function GamingFamily18to24Female() {
     gaming_impact?: string;
     character_preference?: string;
     gender_bias?: string;
+    gender_bias_explanation?: string;
     primary_reason?: string;
     peers_reaction?: string;
     women_communities?: string;
@@ -98,6 +118,7 @@ export default function GamingFamily18to24Female() {
       gaming_impact: savedData.gaming_impact || '',
       character_preference: savedData.character_preference || '',
       gender_bias: savedData.gender_bias || '',
+      gender_bias_explanation: savedData.gender_bias_explanation || '',
       primary_reason: savedData.primary_reason || '',
       peers_reaction: savedData.peers_reaction || '',
       women_communities: savedData.women_communities || '',
@@ -148,32 +169,6 @@ export default function GamingFamily18to24Female() {
               name="family_perception"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Do you feel gaming is misunderstood by older generations?</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="bg-background/50">
-                        <SelectValue placeholder="Select perception" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {oldgenOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            
-            
-            <FormField
-              control={form.control}
-              name="family_perception"
-              render={({ field }) => (
-                <FormItem>
                   <FormLabel>What do your parents think about your gaming?</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
@@ -194,7 +189,27 @@ export default function GamingFamily18to24Female() {
               )}
             />
 
- <FormField
+            <FormField
+              control={form.control}
+              name="family_gamers"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                  <FormControl>
+                    <Checkbox
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
+                  <div className="space-y-1 leading-none">
+                    <FormLabel>
+                      Do you game with your social circle?
+                    </FormLabel>
+                  </div>
+                </FormItem>
+              )}
+            />
+
+            <FormField
               control={form.control}
               name="primary_reason"
               render={({ field }) => (
@@ -219,7 +234,7 @@ export default function GamingFamily18to24Female() {
               )}
             />         
 
-<FormField
+            <FormField
               control={form.control}
               name="academic_networking"
               render={({ field }) => (
@@ -236,7 +251,8 @@ export default function GamingFamily18to24Female() {
                 </FormItem>
               )}
             />
- <FormField
+            
+            <FormField
               control={form.control}
               name="gender_bias"
               render={({ field }) => (
@@ -281,7 +297,7 @@ export default function GamingFamily18to24Female() {
               />
             )}
 
-                        <FormField
+            <FormField
               control={form.control}
               name="character_preference"
               render={({ field }) => (
@@ -306,8 +322,6 @@ export default function GamingFamily18to24Female() {
               )}
             />
             
-           
-
             <FormField
               control={form.control}
               name="women_communities"
@@ -333,7 +347,32 @@ export default function GamingFamily18to24Female() {
               )}
             />
 
-{/*             <FormField
+            <FormField
+              control={form.control}
+              name="peers_reaction"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>How do peers react when they learn you&apos;re a gamer?</FormLabel>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="bg-background/50">
+                        <SelectValue placeholder="Select typical reaction" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {reactionOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
               control={form.control}
               name="dating_supportive"
               render={({ field }) => (
@@ -408,8 +447,6 @@ export default function GamingFamily18to24Female() {
               )}
             />
 
-            
-
             <FormField
               control={form.control}
               name="feel_represented"
@@ -435,62 +472,7 @@ export default function GamingFamily18to24Female() {
               )}
             />
 
-           
-
             <FormField
-              control={form.control}
-              name="gender_bias"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Do you experience gender bias in gaming communities?</FormLabel>
-                  <FormControl>
-                    <RadioGroup
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                      className="flex space-x-8"
-                    >
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="yes" id="gender_bias_yes" />
-                        <FormLabel htmlFor="gender_bias_yes" className="font-normal">
-                          Yes
-                        </FormLabel>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <RadioGroupItem value="no" id="gender_bias_no" />
-                        <FormLabel htmlFor="gender_bias_no" className="font-normal">
-                          No
-                        </FormLabel>
-                      </div>
-                    </RadioGroup>
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
- */}
-
-
-{/*             <FormField
-              control={form.control}
-              name="family_gamers"
-              render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
-                  <FormControl>
-                    <Checkbox
-                      checked={field.value}
-                      onCheckedChange={field.onChange}
-                    />
-                  </FormControl>
-                  <div className="space-y-1 leading-none">
-                    <FormLabel>
-                      Do you game with your social circle?
-                    </FormLabel>
-                  </div>
-                </FormItem>
-              )}
-            /> */}
-
-{/*             <FormField
               control={form.control}
               name="gaming_impact"
               render={({ field }) => (
@@ -506,7 +488,7 @@ export default function GamingFamily18to24Female() {
                   <FormMessage />
                 </FormItem>
               )}
-            /> */}
+            />
 
             <div className="flex justify-end space-x-4 pt-4">
               <Button 

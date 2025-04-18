@@ -412,17 +412,13 @@ export default function GamingPreferences() {
     favorite_game_1_other?: string;
     favorite_game_2_other?: string;
     favorite_game_3_other?: string;
-    preferred_genre?: string[];
-    spending_monthly?: string;
     next_game?: string;
-    device_ownership?: string[];
-    gaming_peripherals?: string[];
-    internet_speed?: string;
-    favorite_developers?: string[];
     gaming_spends?: string;
+    gaming_peripherals?: string[];
     gear_upgrade?: string;
     purchase_platforms?: string[];
     kreo_familiarity?: string;
+    spending_monthly?: string;
   };
 
   const form = useForm<z.infer<typeof gamingPreferencesSchema>>({
@@ -435,17 +431,13 @@ export default function GamingPreferences() {
       favorite_game_1_other: savedData.favorite_game_1_other || '',
       favorite_game_2_other: savedData.favorite_game_2_other || '',
       favorite_game_3_other: savedData.favorite_game_3_other || '',
-      preferred_genre: savedData.preferred_genre || [],
-      spending_monthly: savedData.spending_monthly || '',
       next_game: savedData.next_game || '',
-      device_ownership: savedData.device_ownership || [],
-      gaming_peripherals: savedData.gaming_peripherals || [],
-      internet_speed: savedData.internet_speed || '',
-      favorite_developers: savedData.favorite_developers || [],
       gaming_spends: savedData.gaming_spends || '',
+      gaming_peripherals: savedData.gaming_peripherals || [],
       gear_upgrade: savedData.gear_upgrade || '',
       purchase_platforms: savedData.purchase_platforms || [],
-      kreo_familiarity: savedData.kreo_familiarity || ''
+      kreo_familiarity: savedData.kreo_familiarity || '',
+      spending_monthly: savedData.spending_monthly || ''
     },
     mode: "onSubmit"
   });
@@ -510,16 +502,30 @@ export default function GamingPreferences() {
 
   const onSubmit = (data: z.infer<typeof gamingPreferencesSchema>) => {
     try {
-      // Ensure optional fields are arrays even if not provided
-      const formData = {
+      // Process the favorite games to combine the "other" values
+      const processedData = {
         ...data,
-        preferred_genre: data.preferred_genre || [],
-        device_ownership: data.device_ownership || [],
-        favorite_developers: data.favorite_developers || []
+        // Combine favorite_game_1 and favorite_game_1_other
+        favorite_game_1: data.favorite_game_1 === 'other' && data.favorite_game_1_other 
+          ? data.favorite_game_1_other 
+          : data.favorite_game_1,
+        // Combine favorite_game_2 and favorite_game_2_other
+        favorite_game_2: data.favorite_game_2 === 'other' && data.favorite_game_2_other 
+          ? data.favorite_game_2_other 
+          : data.favorite_game_2,
+        // Combine favorite_game_3 and favorite_game_3_other
+        favorite_game_3: data.favorite_game_3 === 'other' && data.favorite_game_3_other 
+          ? data.favorite_game_3_other 
+          : data.favorite_game_3,
       };
       
-      console.log('Form submitted successfully:', formData);
-      updateResponses('gaming_preferences', formData);
+      // Remove the "other" fields before sending to the database
+      delete processedData.favorite_game_1_other;
+      delete processedData.favorite_game_2_other;
+      delete processedData.favorite_game_3_other;
+      
+      console.log('Form submitted successfully:', processedData);
+      updateResponses('gaming_preferences', processedData);
       console.log('Responses updated, navigating to next section');
       
       // Explicitly navigate to GamingHabits section

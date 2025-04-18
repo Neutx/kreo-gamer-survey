@@ -116,6 +116,7 @@ export default function GamingFamily25PlusFemale() {
     gaming_impact?: string;
     character_preference?: string;
     gender_bias?: string;
+    gender_bias_explanation?: string;
     primary_reason?: string;
     game_with_partner?: string;
     female_experience?: string;
@@ -136,6 +137,7 @@ export default function GamingFamily25PlusFemale() {
       gaming_impact: savedData.gaming_impact || '',
       character_preference: savedData.character_preference || '',
       gender_bias: savedData.gender_bias || '',
+      gender_bias_explanation: savedData.gender_bias_explanation || '',
       primary_reason: savedData.primary_reason || '',
       game_with_partner: savedData.game_with_partner || '',
       female_experience: savedData.female_experience || '',

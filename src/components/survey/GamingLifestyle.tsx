@@ -138,43 +138,37 @@ export default function GamingLifestyle() {
   const [filteredActivity, setFilteredActivity] = useState(activityOptions);
 
   const savedData = responses?.gaming_lifestyle || {
+    interest: "",
+    other_interests: "",
     customised_peripherals: "",
+    gaming_food: "",
+    gaming_drink: "",
     watch_content: "",
-    content_platforms: [],
+    fav_creator: "",
     esp_participation: "",
     is_content_c: "",
+    content_platforms: [],
     in_game_spends: "",
     merch_spends: "",
-    collectibles: "",
-    platform_handles: [],
-    platform_names: [],
-    peripherals_customized: [],
-    merchandise_spending: [],
-    collectibles_owned: [],
-    esports_participation: [],
-    game_spending: [],
-    streaming_platforms: []
+    collectibles: ""
   };
 
   const form = useForm<z.infer<typeof gamingLifestyleSchema>>({
     resolver: zodResolver(gamingLifestyleSchema),
     defaultValues: {
+      interest: savedData.interest || "",
+      other_interests: savedData.other_interests || "",
       customised_peripherals: savedData.customised_peripherals || "",
+      gaming_food: savedData.gaming_food || "",
+      gaming_drink: savedData.gaming_drink || "",
       watch_content: savedData.watch_content || "",
-      content_platforms: savedData.content_platforms || [],
+      fav_creator: savedData.fav_creator || "",
       esp_participation: savedData.esp_participation || "",
       is_content_c: savedData.is_content_c || "",
+      content_platforms: savedData.content_platforms || [],
       in_game_spends: savedData.in_game_spends || "",
       merch_spends: savedData.merch_spends || "",
-      collectibles: savedData.collectibles || "",
-      platform_handles: savedData.platform_handles || [],
-      platform_names: savedData.platform_names || [],
-      peripherals_customized: savedData.peripherals_customized || [],
-      merchandise_spending: savedData.merchandise_spending || [],
-      collectibles_owned: savedData.collectibles_owned || [],
-      esports_participation: savedData.esports_participation || [],
-      game_spending: savedData.game_spending || [],
-      streaming_platforms: savedData.streaming_platforms || []
+      collectibles: savedData.collectibles || ""
     }
   });
 

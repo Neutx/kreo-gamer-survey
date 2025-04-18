@@ -126,6 +126,7 @@ export default function GamingFamilyUnder18Male() {
     gaming_impact?: string;
     character_preference?: string;
     gender_bias?: string;
+    gender_bias_explanation?: string;
     primary_reason?: string;
     parent_gaming_rules?: string;
     parents_play_games?: string;
@@ -143,6 +144,7 @@ export default function GamingFamilyUnder18Male() {
       gaming_impact: savedData.gaming_impact || '',
       character_preference: savedData.character_preference || '',
       gender_bias: savedData.gender_bias || '',
+      gender_bias_explanation: savedData.gender_bias_explanation || '',
       primary_reason: savedData.primary_reason || '',
       parent_gaming_rules: savedData.parent_gaming_rules || '',
       parents_play_games: savedData.parents_play_games || '',

@@ -54,17 +54,10 @@ export const gamingPreferencesSchema = z.object({
   favorite_game_1_other: z.string().optional(),
   favorite_game_2_other: z.string().optional(),
   favorite_game_3_other: z.string().optional(),
-  preferred_genre: z.array(z.string()).optional(),
-  spending_monthly: z.string({ required_error: 'Please select your spending range' }),
   next_game: z.string().optional(),
-  device_ownership: z.array(z.string()).optional(),
-  gaming_peripherals: z.array(z.string()).min(1, { message: 'Select at least one peripheral' }),
-  internet_speed: z.string().optional(),
-  favorite_developers: z.array(z.string()).optional(),
   gaming_spends: z.string({ required_error: 'Please select your spending preference' }),
+  gaming_peripherals: z.array(z.string()).min(1, { message: 'Select at least one peripheral' }),
   gear_upgrade: z.string({ required_error: 'Please select your upgrade frequency' }),
-  purchase_platforms: z.array(z.string()).min(1, { message: 'Select at least one platform' }),
-  kreo_familiarity: z.string({ required_error: 'Please select your familiarity' }),
   gear_features: z.object({
     performance: z.number().min(1).max(5).optional(),
     aesthetics: z.number().min(1).max(5).optional(),
@@ -72,6 +65,9 @@ export const gamingPreferencesSchema = z.object({
     price: z.number().min(1).max(5).optional(),
     brand: z.number().min(1).max(5).optional(),
   }).optional(),
+  purchase_platforms: z.array(z.string()).min(1, { message: 'Select at least one platform' }),
+  kreo_familiarity: z.string({ required_error: 'Please select your familiarity' }),
+  spending_monthly: z.string({ required_error: 'Please select your spending range' }),
 });
 
 export const gamingHabitsSchema = z.object({
@@ -83,27 +79,19 @@ export const gamingHabitsSchema = z.object({
 });
 
 export const gamingLifestyleSchema = z.object({
+  interest: z.string().optional(),
+  other_interests: z.string().optional(),
   customised_peripherals: z.string({ required_error: 'Please select an option' }),
-  watch_content: z.string({ required_error: 'Please select an option' }),
-  content_platforms: z.array(z.string()).optional(),
-  esp_participation: z.string({ required_error: 'Please select an option' }),
-  is_content_c: z.string({ required_error: 'Please select an option' }),
-  in_game_spends: z.string({ required_error: 'Please select your spending range' }),
-  merch_spends: z.string({ required_error: 'Please select your spending range' }),
-  collectibles: z.string({ required_error: 'Please select an option' }),
-  platform_handles: z.array(z.string()).optional(),
-  platform_names: z.array(z.string()).optional(),
-  peripherals_customized: z.array(z.string()).optional(),
-  merchandise_spending: z.array(z.string()).optional(),
-  collectibles_owned: z.array(z.string()).optional(),
-  esports_participation: z.array(z.string()).optional(),
-  game_spending: z.array(z.string()).optional(),
-  streaming_platforms: z.array(z.string()).optional(),
   gaming_food: z.string().optional(),
   gaming_drink: z.string().optional(),
+  watch_content: z.string({ required_error: 'Please select an option' }),
   fav_creator: z.string().optional(),
-  interest: z.string().optional(),
-  other_interests: z.string().optional()
+  esp_participation: z.string({ required_error: 'Please select an option' }),
+  is_content_c: z.string({ required_error: 'Please select an option' }),
+  content_platforms: z.array(z.string()).optional(),
+  in_game_spends: z.string({ required_error: 'Please select your spending range' }),
+  merch_spends: z.string({ required_error: 'Please select your spending range' }),
+  collectibles: z.string({ required_error: 'Please select an option' })
 });
 
 export const gamingFamilyUnder18MaleSchema = z.object({
@@ -147,13 +135,6 @@ export const gamingFamily18to24MaleSchema = z.object({
   gender_bias: z.string({ required_error: 'Please select an option regarding gender bias' }),
   gender_bias_explanation: z.string().optional(),
   primary_reason: z.string({ required_error: 'Please select your primary reason' }),
-  social_relationships: z.string().optional(),
-  game_with_roommates: z.string().optional(),
-  balance_gaming: z.string().optional(),
-  influence_friends: z.string().optional(),
-  college_events: z.string().optional(),
-  replace_social: z.string().optional(),
-  gaming_career: z.string().optional(),
   old_generation: z.string({ required_error: 'Please select your view on older generations' }),
   academic_networking: z.string().optional(),
 });
@@ -171,7 +152,7 @@ export const gamingFamily18to24FemaleSchema = z.object({
   dating_supportive: z.string({ required_error: 'Please select level of support' }),
   gender_interactions: z.string({ required_error: 'Please select frequency' }),
   hide_gender: z.string({ required_error: 'Please select frequency' }),
-  academic_networking: z.string({ required_error: 'Please select an option' }),
+  academic_networking: z.string().optional(),
   feel_represented: z.string({ required_error: 'Please select level of representation' }),
 });
 
@@ -223,16 +204,10 @@ export const gamingFamilySchema = z.object({
 });
 
 export const futureGamingSchema = z.object({
-  metaverse_interest: z.string({ required_error: 'Please rate your interest' }),
-  vr_adoption: z.string({ required_error: 'Please select your VR plans' }),
-  cloud_gaming: z.string({ required_error: 'Please select your preference' }),
-  sustainability: z.string().min(1, { message: 'Please select an option' }),
-  ai_in_games: z.string({ required_error: 'Please rate your interest in AI' }),
-  blockchain_gaming: z.string({ required_error: 'Please rate your interest in blockchain gaming' }),
-  subscription_services: z.string({ required_error: 'Please select your preference' }),
-  future_spending: z.string({ required_error: 'Please select your future spending plans' }),
-  future_gaming: z.array(z.string()).min(1, { message: 'Please select at least one option' }),
-  additional_feedback: z.string().optional(),
+  future_gaming: z.array(z.string()).min(1, "Please select at least one option"),
+  sustainability: z.string().min(1, "Please select an option"),
   referred: z.string().optional(),
   referrer_name: z.string().optional(),
+  additional_feedback: z.string().optional(),
+  favorite_product: z.string().optional(),
 }); 
