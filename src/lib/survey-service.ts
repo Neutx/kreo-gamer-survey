@@ -8,6 +8,7 @@ import {
   getDoc
 } from 'firebase/firestore';
 import { SurveyData, SurveySection } from '@/types/survey';
+import { syncToGoogleSheets } from './sheets-service';
 
 // Constants for localStorage keys
 const LOCAL_STORAGE_KEYS = {
@@ -90,11 +91,32 @@ const calculateCompletionPercentage = (responses: Partial<SurveyData>) => {
 export const markSurveyCompleted = async (responseId: string) => {
   try {
     const responseRef = doc(collection(db, 'responses'), responseId);
+    
+    // Get the current response data
+    const docSnap = await getDoc(responseRef);
+    if (!docSnap.exists()) {
+      throw new Error('Response not found');
+    }
+    
+    const responseData = docSnap.data();
+    
+    // Update the document
     await updateDoc(responseRef, {
       'user_info.completion_status': 'completed',
       'user_info.completion_percentage': 100,
       'user_info.completion_time': serverTimestamp()
     });
+    
+    // Sync the updated data to Google Sheets
+    await syncToGoogleSheets({
+      ...responseData,
+      user_info: {
+        ...responseData.user_info,
+        completion_status: 'completed',
+        completion_percentage: 100,
+      }
+    }, responseId);
+    
     return true;
   } catch (error) {
     // Handle permission errors gracefully
