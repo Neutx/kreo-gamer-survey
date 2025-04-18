@@ -1,10 +1,10 @@
 {
   "/_not-found/page": "app/_not-found/page.js",
-  "/page": "app/page.js",
-  "/survey/thank-you/page": "app/survey/thank-you/page.js",
   "/survey/page": "app/survey/page.js",
+  "/survey/thank-you/page": "app/survey/thank-you/page.js",
+  "/page": "app/page.js",
   "/admin-view/analytics/page": "app/admin-view/analytics/page.js",
-  "/admin-view/page": "app/admin-view/page.js",
   "/admin-view/dashboard/page": "app/admin-view/dashboard/page.js",
-  "/admin-view/login/page": "app/admin-view/login/page.js"
+  "/admin-view/login/page": "app/admin-view/login/page.js",
+  "/admin-view/page": "app/admin-view/page.js"
 }
