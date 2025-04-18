@@ -9,6 +9,10 @@ const inter = Inter({ subsets: ['latin'] })
 export const metadata: Metadata = {
   title: 'Kreo Ultimate Gamer Survey',
   description: "India's first comprehensive gamer survey",
+  icons: {
+    icon: '/android-chrome-512x512.png',
+    apple: '/android-chrome-512x512.png',
+  },
 }
 
 export default function RootLayout({
