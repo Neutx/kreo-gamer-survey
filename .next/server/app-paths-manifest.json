@@ -1,7 +1,1 @@
-{
-  "/page": "app/page.js",
-  "/_not-found/page": "app/_not-found/page.js",
-  "/survey/page": "app/survey/page.js",
-  "/admin-view/page": "app/admin-view/page.js",
-  "/admin-view/dashboard/page": "app/admin-view/dashboard/page.js"
-}
+{}

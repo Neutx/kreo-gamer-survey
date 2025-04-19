@@ -3,6 +3,7 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
+  output: 'export',
   // This forces Next.js to use Server Components for all routes
   // which makes handling server-only dependencies easier
   experimental: {
