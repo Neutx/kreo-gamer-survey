@@ -2,13 +2,7 @@
 
 const nextConfig = {
   reactStrictMode: true,
-  swcMinify: true,
   output: 'export',
-  // This forces Next.js to use Server Components for all routes
-  // which makes handling server-only dependencies easier
-  experimental: {
-    serverExternalPackages: ['google-spreadsheet', 'google-auth-library']
-  },
   // This tells Next.js to apply Node.js polyfills for server-side modules
   webpack: (config, { isServer }) => {
     if (!isServer) {
