@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { GoogleSpreadsheet } from 'google-spreadsheet';
 import { JWT } from 'google-auth-library';
 
+export const dynamic = "force-static";
+
 // Create a JWT for Google Sheets API authentication
 const createJWT = () => {
   try {
