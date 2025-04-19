@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 
 interface Toast {
   id: string;
@@ -92,14 +92,16 @@ export function useToast() {
 }
 
 // Export for easier imports
-export const toast = {
-  // Simple function that shows an error when used outside provider
-  show: (options: Omit<Toast, "id">) => {
-    try {
-      const { toast } = useToast();
-      toast(options);
-    } catch (error) {
+export function useToastShow() {
+  try {
+    const context = useToast();
+    return (options: Omit<Toast, "id">) => {
+      context.toast(options);
+    };
+  } catch {
+    return (options: Omit<Toast, "id">) => {
       console.error("Toast could not be displayed. Make sure ToastProvider is in your component tree.");
-    }
+      return options;
+    };
   }
-}; 
+} 

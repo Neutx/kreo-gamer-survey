@@ -33,12 +33,10 @@ export default function Home() {
       >
         <GlowingEffect
           spread={15}
-          glow={true}
           disabled={false}
           proximity={100}
           inactiveZone={0.01}
-          borderWidth={1.5}
-          variant="default"
+          borderWidth={1}
         />
         <div className="relative z-10">
           <div className="text-4xl mb-4">{icon}</div>

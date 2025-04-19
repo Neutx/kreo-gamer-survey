@@ -10,7 +10,6 @@ interface GlowingEffectProps {
   proximity?: number;
   spread?: number;
   variant?: "default" | "white";
-  glow?: boolean;
   className?: string;
   disabled?: boolean;
   movementDuration?: number;
@@ -23,7 +22,6 @@ const GlowingEffect = memo(
     proximity = 120,
     spread = 10,
     variant = "default",
-    glow = true,
     className,
     movementDuration = 0.5,
     borderWidth = 1.5,
@@ -77,7 +75,7 @@ const GlowingEffect = memo(
 
           const currentAngle =
             parseFloat(element.style.getPropertyValue("--start")) || 0;
-          let targetAngle =
+          const targetAngle =
             (180 * Math.atan2(mouseY - center[1], mouseX - center[0])) /
               Math.PI +
             90;

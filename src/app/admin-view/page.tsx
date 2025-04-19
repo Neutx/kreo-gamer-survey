@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { auth } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
@@ -26,35 +26,7 @@ export default function AdminDashboard() {
   const [responses, setResponses] = useState<ResponseData[]>([]);
   const router = useRouter();
 
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      if (!user) {
-        router.push('/admin-view/login');
-      } else {
-        fetchData();
-        setLoading(false);
-      }
-    });
-
-    return () => unsubscribe();
-  }, [router]);
-
-  const fetchData = async () => {
-    try {
-      const responsesCollection = collection(db, 'responses');
-      const responseSnapshot = await getDocs(responsesCollection);
-      const responsesData = responseSnapshot.docs.map(doc => doc.data() as ResponseData);
-      console.log('Fetched Responses:', responsesData);
-      setTotalResponses(responsesData.length);
-      setCompletionRate(calculateCompletionRate(responsesData));
-      setResponsesToday(calculateResponsesToday(responsesData));
-      setAverageCompletionTime(calculateAverageCompletionTime(responsesData));
-      setResponses(responsesData);
-    } catch (error) {
-      console.error('Error fetching data:', error);
-    }
-  };
-
+  // Helper functions
   const calculateCompletionRate = (responses: ResponseData[]) => {
     const completedResponses = responses.filter(response => response.user_info.completion_status === 'completed');
     console.log('Completed Responses:', completedResponses);
@@ -77,6 +49,35 @@ export default function AdminDashboard() {
     }, 0);
     return (totalCompletionTime / responses.length) || 0;
   };
+
+  const fetchData = useCallback(async () => {
+    try {
+      const responsesCollection = collection(db, 'responses');
+      const responseSnapshot = await getDocs(responsesCollection);
+      const responsesData = responseSnapshot.docs.map(doc => doc.data() as ResponseData);
+      console.log('Fetched Responses:', responsesData);
+      setTotalResponses(responsesData.length);
+      setCompletionRate(calculateCompletionRate(responsesData));
+      setResponsesToday(calculateResponsesToday(responsesData));
+      setAverageCompletionTime(calculateAverageCompletionTime(responsesData));
+      setResponses(responsesData);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+    }
+  }, [calculateCompletionRate, calculateResponsesToday, calculateAverageCompletionTime]);
+
+  useEffect(() => {
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (!user) {
+        router.push('/admin-view/login');
+      } else {
+        fetchData();
+        setLoading(false);
+      }
+    });
+
+    return () => unsubscribe();
+  }, [router, fetchData]);
 
   if (loading) {
     return (

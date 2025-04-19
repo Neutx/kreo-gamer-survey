@@ -65,13 +65,11 @@ export default function GamingFamily18to24Male() {
   const savedData = (responses.gaming_family_18to24_male || {}) as {
     family_perception?: string;
     family_gamers?: boolean;
-    gaming_impact?: string;
     character_preference?: string;
     gender_bias?: string;
-    gender_bias_explanation?: string;
-    primary_reason?: string;
     old_generation?: string;
     academic_networking?: string;
+    primary_reason?: string;
   };
 
   const form = useForm<z.infer<typeof gamingFamily18to24MaleSchema>>({
@@ -79,13 +77,11 @@ export default function GamingFamily18to24Male() {
     defaultValues: {
       family_perception: savedData.family_perception || '',
       family_gamers: savedData.family_gamers || false,
-      gaming_impact: savedData.gaming_impact || '',
       character_preference: savedData.character_preference || '',
       gender_bias: savedData.gender_bias || '',
-      gender_bias_explanation: savedData.gender_bias_explanation || '',
-      primary_reason: savedData.primary_reason || '',
       old_generation: savedData.old_generation || '',
       academic_networking: savedData.academic_networking || '',
+      primary_reason: savedData.primary_reason || '',
     },
   });
 
@@ -238,26 +234,6 @@ export default function GamingFamily18to24Male() {
                 </FormItem>
               )}
             />
-
-            {form.watch('gender_bias') === 'yes_can_talk' && (
-              <FormField
-                control={form.control}
-                name="gender_bias_explanation"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Please share your thoughts about gender bias in gaming</FormLabel>
-                    <FormControl>
-                      <Textarea
-                        placeholder="Tell us about your experiences or observations..."
-                        className="bg-background/50 min-h-[100px]"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            )}
 
             <FormField
               control={form.control}

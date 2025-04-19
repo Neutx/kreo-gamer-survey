@@ -1,67 +1,63 @@
-import { GoogleSpreadsheet } from 'google-spreadsheet';
-import { JWT } from 'google-auth-library';
-import { SurveyData } from '@/types/survey';
-
-// The serviceAccountAuth should be created using environment variables
-// These should be added to your .env.local file and deployment environment
-const createJWT = () => {
-  return new JWT({
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-    key: process.env.GOOGLE_PRIVATE_KEY?.replace(/\\n/g, '\n'),
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
-};
+/**
+ * Client-side service for syncing survey data to Google Sheets
+ * This uses the API routes to avoid importing server-only libraries on the client
+ */
 
 /**
- * Syncs a survey response to Google Sheets
+ * Syncs a survey response to Google Sheets via API route
  * @param responseData The survey response data from Firebase
  * @param responseId The Firebase response ID
  */
 export const syncToGoogleSheets = async (
-  responseData: any,
+  responseData: Record<string, unknown>,
   responseId: string
 ) => {
   try {
-    // Check if Google Sheets integration is configured
-    if (
-      !process.env.GOOGLE_SPREADSHEET_ID ||
-      !process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL ||
-      !process.env.GOOGLE_PRIVATE_KEY
-    ) {
-      console.warn('Google Sheets integration not configured');
-      return;
+    const response = await fetch('/api/sync-to-sheets', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        responseData,
+        responseId,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error syncing to Google Sheets:', errorData);
+      return false;
     }
 
-    const jwt = createJWT();
-    const doc = new GoogleSpreadsheet(process.env.GOOGLE_SPREADSHEET_ID, jwt);
-    
-    // Load document properties and sheets
-    await doc.loadInfo();
-    
-    // Access the first sheet
-    const sheet = doc.sheetsByIndex[0];
-    
-    // Prepare the row data
-    const rowData = {
-      response_id: responseId,
-      timestamp: new Date().toISOString(),
-      completion_status: responseData.user_info?.completion_status || 'unknown',
-      completion_percentage: responseData.user_info?.completion_percentage || 0,
-      // Add specific fields from your survey data
-      // For example:
-      age: responseData.demographics?.age || '',
-      gender: responseData.demographics?.gender || '',
-      // Add more fields as needed based on your survey structure
-    };
-    
-    // Add a row to the sheet
-    await sheet.addRow(rowData);
-    
     console.log(`Survey response ${responseId} synced to Google Sheets`);
     return true;
   } catch (error) {
     console.error('Error syncing to Google Sheets:', error);
     // Don't let Google Sheets errors disrupt the user experience
+    return false;
+  }
+};
+
+/**
+ * Tests the connection to Google Sheets
+ * @returns {Promise<boolean>} Whether the connection was successful
+ */
+export const testSheetsConnection = async () => {
+  try {
+    const response = await fetch('/api/test-sheets');
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      console.error('Error testing Google Sheets connection:', errorData);
+      return false;
+    }
+
+    const data = await response.json();
+    console.log('Test connection to Google Sheets successful:', data);
+    return true;
+  } catch (error) {
+    console.error('Error testing Google Sheets connection:', error);
     return false;
   }
 }; 

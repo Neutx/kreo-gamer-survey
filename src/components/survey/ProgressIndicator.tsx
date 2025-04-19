@@ -3,7 +3,6 @@
 import React, { useMemo } from 'react';
 import { useSurvey } from '@/context/SurveyContext';
 import { Progress } from '@/components/ui/progress';
-import { SurveySection } from '@/types/survey';
 
 // Section labels for display in the progress bar
 const sectionLabels: Record<string, string> = {
@@ -34,31 +33,13 @@ const mainSections = [
 ];
 
 export default function ProgressIndicator() {
-  const { currentSection, getDemographicSection, getFamilySection } = useSurvey();
+  const { currentSection } = useSurvey();
 
-  // Get the current main section for display purposes
-  const currentMainSection = useMemo(() => {
-    // Handle demographic conditional sections
-    if (currentSection.startsWith('demographics_')) {
-      return 'demographics';
-    }
-    
-    // Handle family conditional sections
-    if (currentSection.startsWith('gaming_family_')) {
-      return 'gaming_family';
-    }
-    
-    return currentSection;
-  }, [currentSection]);
-  
   // Calculate the total number of sections to visit (including the current conditional section)
   const totalSections = useMemo(() => {
-    const demographicSection = getDemographicSection();
-    const familySection = getFamilySection();
-    
     // Base sections + conditional sections (demographic and family)
     return mainSections.length + 1;
-  }, [getDemographicSection, getFamilySection]);
+  }, []);
   
   // Calculate the current section index (accounting for conditional sections)
   const currentIndex = useMemo(() => {
