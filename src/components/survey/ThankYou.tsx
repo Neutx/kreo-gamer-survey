@@ -54,6 +54,27 @@ export default function ThankYou() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
+          className="bg-gradient-to-r from-purple-50 to-pink-50 p-6 rounded-xl border border-purple-100"
+        >
+          <h3 className="text-xl font-bold text-gray-800 mb-2">Your Reward Coupon</h3>
+          <div className="bg-white py-3 px-4 rounded-md font-mono font-bold text-xl text-center tracking-wider mb-3 border-2 border-dashed border-purple-300">
+            HOWINDIAGAMES
+          </div>
+          <p className="text-gray-700 mb-4">
+            Get <span className="font-semibold">₹300 off</span> on your next order at{" "}
+            <a href="https://www.kreo-tech.com" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:underline">
+              www.kreo-tech.com
+            </a>
+          </p>
+          <p className="text-xs text-gray-500">
+            Terms & Conditions: Minimum cart value ₹2,499/-
+          </p>
+        </motion.div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
           className="text-sm text-muted-foreground"
         >
           <p>Share this survey with your fellow gamers!</p>
