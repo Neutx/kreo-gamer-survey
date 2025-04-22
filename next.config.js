@@ -3,6 +3,9 @@
 const nextConfig = {
   reactStrictMode: true,
   output: 'export',
+  images: {
+    unoptimized: true,
+  },
   // This tells Next.js to apply Node.js polyfills for server-side modules
   webpack: (config, { isServer }) => {
     if (!isServer) {

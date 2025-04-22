@@ -11,6 +11,7 @@ import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import Select from 'react-select';
 import {
   Form,
   FormControl,
@@ -51,6 +52,25 @@ const modPref = [
   { id: 'no', label: 'No' },
 ];
 
+const bettingAppOptions = [
+  { id: 'yes', label: 'Yes' },
+  { id: 'no', label: 'No' },
+];
+
+const bettingPlatformOptions = [
+  { value: 'dream11', label: 'Dream11' },
+  { value: 'mpl', label: 'MPL (Mobile Premier League)' },
+  { value: 'stake', label: 'Stake' },
+  { value: 'parimatch', label: 'Parimatch' },
+  { value: 'betway', label: '10Cric' },
+  { value: 'bet365', label: 'Bet365' },
+  { value: 'dafabet', label: 'Dafabet' },
+  { value: 'lotusbook247', label: 'Lotusbook247' },
+  { value: 'fun88', label: 'Fun88' },
+  { value: 'betway', label: 'Betway' },
+  { value: 'other', label: 'Other' },
+];
+
 type FormValues = z.infer<typeof gamingHabitsSchema>;
 
 export default function GamingHabits() {
@@ -66,8 +86,13 @@ export default function GamingHabits() {
       game_type: savedData.game_type || '',
       game_buy: savedData.game_buy || [],
       mod_controller: savedData.mod_controller || '',
+      uses_betting_apps: savedData.uses_betting_apps || '',
+      betting_platforms: savedData.betting_platforms || [],
     },
   });
+
+  // Watch the uses_betting_apps field to conditionally show the platforms dropdown
+  const usesBettingApps = form.watch('uses_betting_apps');
 
   function onSubmit(values: FormValues) {
     updateResponses('gaming_habits', values);
@@ -252,6 +277,65 @@ export default function GamingHabits() {
                 </FormItem>
               )}
             />
+
+            {/* Betting app usage question */}
+            <FormField
+              control={form.control}
+              name="uses_betting_apps"
+              render={({ field }) => (
+                <FormItem className="space-y-3">
+                  <FormLabel>Do you use betting apps?</FormLabel>
+                  <FormControl>
+                    <RadioGroup
+                      onValueChange={field.onChange}
+                      value={field.value}
+                      className="space-y-1"
+                    >
+                      {bettingAppOptions.map((option) => (
+                        <FormItem key={option.id} className="flex items-center space-x-3 space-y-0">
+                          <FormControl>
+                            <RadioGroupItem value={option.id} />
+                          </FormControl>
+                          <FormLabel className="font-normal">
+                            {option.label}
+                          </FormLabel>
+                        </FormItem>
+                      ))}
+                    </RadioGroup>
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            {/* Betting platforms selection - only show if uses_betting_apps is 'yes' */}
+            {usesBettingApps === 'yes' && (
+              <FormField
+                control={form.control}
+                name="betting_platforms"
+                render={({ field }) => (
+                  <FormItem className="space-y-3">
+                    <FormLabel>What betting platforms do you use to bet?</FormLabel>
+                    <FormControl>
+                      <Select
+                        isMulti
+                        options={bettingPlatformOptions}
+                        classNamePrefix="react-select"
+                        className="react-select-container"
+                        placeholder="Select betting platforms..."
+                        value={bettingPlatformOptions.filter(option => 
+                          field.value?.includes(option.value)
+                        )}
+                        onChange={(selectedOptions) => {
+                          field.onChange(selectedOptions ? selectedOptions.map(option => option.value) : []);
+                        }}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
 
             <div className="flex justify-end space-x-4 pt-4">
               <Button 

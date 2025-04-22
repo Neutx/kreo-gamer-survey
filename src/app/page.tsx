@@ -88,15 +88,17 @@ export default function Home() {
       {/* Hero Section */}
       <section className="relative min-h-screen w-full overflow-hidden bg-slate-900 flex flex-col items-center justify-center">
         {/* Mobile Background */}
-        <div className="md:hidden absolute inset-0">
+        <div className="md:hidden absolute inset-0 w-full h-full">
           <Image 
-            src="/hero-mobile.jpg" 
+            src="/hero-bg.jpg" 
             alt="Gaming Background Mobile" 
             fill
-            className="object-cover brightness-50"
+            sizes="100vw"
+            className="object-cover object-center brightness-[0.4]"
             priority
             quality={90}
           />
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-900/50 to-black/70 z-10"></div>
         </div>
 
         {/* Desktop Background with Boxes */}

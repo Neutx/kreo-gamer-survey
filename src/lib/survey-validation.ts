@@ -76,6 +76,8 @@ export const gamingHabitsSchema = z.object({
   game_type: z.string({ required_error: 'Select your preferred game type' }),
   game_buy: z.array(z.string()).min(1, { message: 'Select your preferred way to get games' }),
   mod_controller: z.string({ required_error: 'Select if you use modified controllers' }),
+  uses_betting_apps: z.string({ required_error: 'Please select if you use betting apps' }).optional(),
+  betting_platforms: z.array(z.string()).optional(),
 });
 
 export const gamingLifestyleSchema = z.object({
