@@ -1,0 +1,11 @@
+# *
+User-agent: *
+Allow: /
+Disallow: /admin-view
+Disallow: /api
+
+# Host
+Host: https://howindiagames.web.app
+
+# Sitemaps
+Sitemap: https://howindiagames.web.app/sitemap.xml

@@ -63,8 +63,9 @@ Visit http://localhost:3000 to see the application.
 - **Styling**: Tailwind CSS, Shadcn UI
 - **Form Management**: React Hook Form, Zod
 - **Analytics**: Chart.js, React-Chartjs-2
+- **SEO**: next-sitemap for automated sitemap generation
 
-## 📱 Survey Sections
+## �� Survey Sections
 
 - **Demographics** - Customized based on age group (Under 18, 18-24, 25+)
 - **Gaming Preferences** - Platforms, genres, games, spending
@@ -79,6 +80,19 @@ Visit http://localhost:3000 to see the application.
 - **Response Viewer** - Detailed view of individual responses
 - **Analytics** - Visual representation of survey trends
 - **Export** - Download data in CSV format
+
+## 🔍 SEO Features
+
+- **Automatic Sitemap Generation** - A sitemap.xml file is automatically generated during the build process
+- **Robots.txt Generation** - A robots.txt file is created to guide search engine crawlers
+- **Custom Sitemap Configuration** - Exclusion of admin routes and custom URL configuration
+
+### Generating Sitemap Manually
+
+```bash
+# Generate sitemap without building the application
+node scripts/generate-sitemap.js
+```
 
 ## 📄 License
 
