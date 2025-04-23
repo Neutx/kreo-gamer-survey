@@ -2,7 +2,10 @@ import * as z from 'zod';
 
 export const demographicsSchema = z.object({
   ign: z.string().optional(),
-  email: z.string().email({ message: 'Please enter a valid email address' }).optional(),
+  email: z.string().optional().refine(
+    (email) => !email || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email),
+    { message: 'Please enter a valid email address' }
+  ),
   age: z.string({ required_error: 'Please select your age' }),
   gender: z.string({ required_error: 'Please select your gender' }),
   location: z.string().min(2, { message: 'Location is required' }),
