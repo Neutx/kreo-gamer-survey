@@ -41,7 +41,7 @@ const perceptionOptions = [
   { value: 'waste_of_time', label: 'A waste of time' },
   { value: 'fun_hobby', label: 'A fun hobby' },
   { value: 'potential_career', label: 'A potential career' },
-  { value: 'dont_care', label: 'They don&apos;t care' },
+  { value: 'dont_care', label: "They don't care" },
 ];
 
 const reasonOptions = [
