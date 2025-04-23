@@ -26,7 +26,7 @@ import {
 
 const formSchema = z.object({
   ign: z.string().optional(),
-  email: z.string().email({ message: 'Please enter a valid email address' }),
+  email: z.string().email({ message: 'Please enter a valid email address' }).optional(),
   age: z.string({ required_error: 'Please select your age' }),
   gender: z.string({ required_error: 'Please select your gender' }),
   location: z.string().min(2, { message: 'Location is required' }),
@@ -101,7 +101,7 @@ export default function BasicDemographics() {
               name="ign"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>What’s your IGN (In-Game Name)</FormLabel>
+                  <FormLabel>What&apos;s your IGN (In-Game Name)</FormLabel>
                   <FormControl>
                     <Input placeholder="Your gaming nickname" {...field} className="bg-background/50" />
                   </FormControl>
@@ -115,7 +115,7 @@ export default function BasicDemographics() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>What’s your email? (A Surprise for a valid email 😉)</FormLabel>
+                  <FormLabel>What&apos;s your email? (Optional - A Surprise for a valid email 😉)</FormLabel>
                   <FormControl>
                     <Input placeholder="your.email@example.com" {...field} className="bg-background/50" />
                   </FormControl>
@@ -154,7 +154,7 @@ export default function BasicDemographics() {
               name="gender"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>What’s your gender?</FormLabel>
+                  <FormLabel>What&apos;s your gender?</FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger className="bg-background/50">
