@@ -71,7 +71,7 @@ export interface SurveyData {
     mod_controller: string;
   };
   gaming_lifestyle: {
-    interest?: string;
+    interest?: string[] | string;
     other_interests?: string;
     customised_peripherals: string;
     gaming_food?: string;

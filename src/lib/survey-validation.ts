@@ -84,7 +84,7 @@ export const gamingHabitsSchema = z.object({
 });
 
 export const gamingLifestyleSchema = z.object({
-  interest: z.string().optional(),
+  interest: z.array(z.string()).optional(),
   other_interests: z.string().optional(),
   customised_peripherals: z.string({ required_error: 'Please select an option' }),
   gaming_food: z.string().optional(),

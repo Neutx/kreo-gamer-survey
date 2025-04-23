@@ -1,9 +1,9 @@
 'use client';
 
-import React, { useState } from 'react';
+import React from 'react';
 import { motion } from 'framer-motion';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
 import * as z from 'zod';
 import { useSurvey } from '@/context/SurveyContext';
 import { gamingLifestyleSchema } from '@/lib/survey-validation';
@@ -13,6 +13,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import ReactSelect from 'react-select';
 import {
   Form,
   FormControl,
@@ -31,22 +32,23 @@ import {
 import { SurveySection } from "@/types/survey";
 
 const activityOptions = [
-  {id:'anime',label:'Anime'},
-{id:'esports',label:'Esports'},
-{id:'streaming',label:'Streaming'},
-{id:'fitness',label:'Fitness'},
-{id:'technology',label:'Technology'},
-{id:'music',label:'Music'},
-{id:'cosplay',label:'Cosplay'},
-{id:'collectibles',label:'Collectibles'},
-{id:'board_games',label:'Board Games'},
-{id:'fantasy_sports',label:'Fantasy Sports'},
-{id:'coding',label:'Coding'},
-{id:'movies',label:'Movies'},
-{id:'tv_shows',label:'TV Shows'},
-{id:'fashion',label:'Fashion'},
-{id:'travel',label:'Travel'},
-{id:'photography',label:'Photography'},
+  {value:'anime',label:'Anime'},
+  {value:'esports',label:'Esports'},
+  {value:'streaming',label:'Streaming'},
+  {value:'fitness',label:'Fitness'},
+  {value:'technology',label:'Technology'},
+  {value:'music',label:'Music'},
+  {value:'cosplay',label:'Cosplay'},
+  {value:'collectibles',label:'Collectibles'},
+  {value:'board_games',label:'Board Games'},
+  {value:'fantasy_sports',label:'Fantasy Sports'},
+  {value:'coding',label:'Coding'},
+  {value:'movies',label:'Movies'},
+  {value:'tv_shows',label:'TV Shows'},
+  {value:'fashion',label:'Fashion'},
+  {value:'travel',label:'Travel'},
+  {value:'photography',label:'Photography'},
+  {value:'other',label:'Other'},
 ];
 
 
@@ -135,10 +137,9 @@ const collectOptions = [
 
 export default function GamingLifestyle() {
   const { updateResponses, goToPreviousSection, responses, setCurrentSection } = useSurvey();
-  const [filteredActivity, setFilteredActivity] = useState(activityOptions);
 
   const savedData = responses?.gaming_lifestyle || {
-    interest: "",
+    interest: [],
     other_interests: "",
     customised_peripherals: "",
     gaming_food: "",
@@ -156,7 +157,11 @@ export default function GamingLifestyle() {
   const form = useForm<z.infer<typeof gamingLifestyleSchema>>({
     resolver: zodResolver(gamingLifestyleSchema),
     defaultValues: {
-      interest: savedData.interest || "",
+      interest: Array.isArray(savedData.interest) 
+        ? savedData.interest 
+        : (typeof savedData.interest === 'string' && savedData.interest) 
+          ? [savedData.interest] 
+          : [],
       other_interests: savedData.other_interests || "",
       customised_peripherals: savedData.customised_peripherals || "",
       gaming_food: savedData.gaming_food || "",
@@ -171,6 +176,64 @@ export default function GamingLifestyle() {
       collectibles: savedData.collectibles || ""
     }
   });
+
+  // Custom styles for react-select
+  const customStyles = {
+    control: (base: Record<string, unknown>) => ({
+      ...base,
+      backgroundColor: 'white',
+      borderColor: '#e2e8f0',
+      boxShadow: 'none',
+      '&:hover': {
+        borderColor: '#cbd5e1',
+      },
+      minHeight: '42px',
+    }),
+    menu: (base: Record<string, unknown>) => ({
+      ...base,
+      backgroundColor: 'white',
+      zIndex: 9999,
+    }),
+    option: (base: Record<string, unknown>, state: { isSelected?: boolean; isFocused?: boolean }) => ({
+      ...base,
+      backgroundColor: state.isSelected ? 'rgba(139, 92, 246, 0.1)' : state.isFocused ? 'rgba(139, 92, 246, 0.05)' : 'white',
+      color: 'black',
+      '&:hover': {
+        backgroundColor: 'rgba(139, 92, 246, 0.05)',
+      },
+    }),
+    multiValue: (base: Record<string, unknown>) => ({
+      ...base,
+      backgroundColor: 'rgba(139, 92, 246, 0.1)',
+    }),
+    multiValueLabel: (base: Record<string, unknown>) => ({
+      ...base,
+      color: '#4b5563',
+    }),
+    multiValueRemove: (base: Record<string, unknown>) => ({
+      ...base,
+      color: '#4b5563',
+      '&:hover': {
+        backgroundColor: 'rgba(139, 92, 246, 0.2)',
+        color: 'black',
+      },
+    }),
+    input: (base: Record<string, unknown>) => ({
+      ...base,
+      color: 'black',
+    }),
+    placeholder: (base: Record<string, unknown>) => ({
+      ...base,
+      color: '#9ca3af',
+    }),
+    indicatorSeparator: () => ({
+      display: 'none',
+    }),
+    dropdownIndicator: (base: Record<string, unknown>) => ({
+      ...base,
+      color: '#9ca3af',
+    }),
+  };
 
   // Function to handle form submission
   const handleSubmit = (values: z.infer<typeof gamingLifestyleSchema>) => {
@@ -229,62 +292,61 @@ export default function GamingLifestyle() {
               <FormField
                 control={form.control}
                 name="interest"
-                render={({ field }) => (
+                render={() => (
                   <FormItem>
                     <FormLabel className="text-lg font-semibold">Apart from gaming, what do you follow?</FormLabel>
-                    <Select 
-                      onValueChange={field.onChange} 
-                      defaultValue={field.value}
-                      value={field.value}
-                    >
-                      <FormControl>
-                        <SelectTrigger className="bg-background/50">
-                          <SelectValue placeholder="Select your interests" />
-                        </SelectTrigger>
-                      </FormControl>
-                      <SelectContent>
-                        <div className="p-2">
-                          <Input
-                            placeholder="Search interests..."
-                            className="mb-2 bg-background/50"
-                            onChange={(e) => {
-                              const searchTerm = e.target.value.toLowerCase();
-                              setFilteredActivity(
-                                activityOptions.filter(activity => 
-                                  activity.label.toLowerCase().includes(searchTerm)
-                                )
-                              );
+                    <FormControl>
+                      <Controller
+                        name="interest"
+                        control={form.control}
+                        render={({ field }) => (
+                          <ReactSelect
+                            inputId="interests"
+                            options={activityOptions}
+                            value={activityOptions.filter(option => 
+                              field.value && field.value.includes(option.value)
+                            )}
+                            onChange={(selectedOptions) => {
+                              // Handle multi-select
+                              const values = selectedOptions 
+                                ? selectedOptions.map(option => option.value) 
+                                : [];
+                              field.onChange(values);
+                              
+                              // Clear "other" field if "other" is not selected
+                              if (!values.includes('other')) {
+                                form.setValue('other_interests', '');
+                              }
                             }}
+                            styles={customStyles}
+                            className="w-full"
+                            classNamePrefix="select"
+                            placeholder="Select your interests"
+                            isMulti
+                            isSearchable
                           />
-                        </div>
-                        {filteredActivity.map((option) => (
-                          <SelectItem key={option.id} value={option.id}>
-                            {option.label}
-                          </SelectItem>
-                        ))}
-                        <SelectItem value="other">
-                          Other
-                        </SelectItem>
-                      </SelectContent>
-                    </Select>
-                    {field.value === 'other' && (
+                        )}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                    {form.watch('interest')?.includes('other') && (
                       <FormField
                         control={form.control}
                         name="other_interests"
-                        render={({ field: otherField }) => (
+                        render={({ field }) => (
                           <FormItem className="mt-2">
                             <FormControl>
                               <Input
-                                {...otherField}
-                                placeholder="Enter your interests"
+                                {...field}
+                                placeholder="Enter your other interests"
                                 className="bg-background/50"
                               />
                             </FormControl>
+                            <FormMessage />
                           </FormItem>
                         )}
                       />
                     )}
-                    <FormMessage className="text-red-500" />
                   </FormItem>
                 )}
               />
@@ -374,7 +436,7 @@ export default function GamingLifestyle() {
               name="watch_content"
               render={({ field }) => (
                 <FormItem className="space-y-3">
-                  <FormLabel>How much time do you spend watching gaming content?</FormLabel>
+                  <FormLabel>How frequently do you watch gaming content?</FormLabel>
                   <FormControl>
                     <RadioGroup
                       onValueChange={field.onChange}

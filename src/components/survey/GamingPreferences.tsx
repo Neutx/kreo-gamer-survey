@@ -341,6 +341,11 @@ const peripheralOptions = [
   { id: 'webcam', label: 'Webcam' },
   { id: 'backpack', label: 'Backpack' },
   { id: 'lights', label: 'Lights' },
+  { id: 'mobile_coolers', label: 'Mobile Coolers' },
+  { id: 'triggers', label: 'Gaming Triggers' },
+  { id: 'thumb_sleeves', label: 'Thumb Sleeves' },
+  { id: 'other', label: 'Other' }
+   ,
 ];
 
 const ecomOptions = [
