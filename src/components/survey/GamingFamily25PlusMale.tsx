@@ -9,7 +9,7 @@ import { useSurvey } from '@/context/SurveyContext';
 import { gamingFamily25PlusMaleSchema } from '@/lib/survey-validation';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
+
 import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
