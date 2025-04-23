@@ -67,7 +67,7 @@ export default function ThankYou() {
             </a>
           </p>
           <p className="text-xs text-gray-500">
-            Terms & Conditions: Minimum cart value ₹2,499/-. The products shall not be returnable.
+            Terms & Conditions: Minimum cart value ₹2,999/-. The products shall not be returnable.
           </p>
         </motion.div>
 
