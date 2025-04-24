@@ -118,7 +118,7 @@ export default function BasicDemographics() {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>What&apos;s your email? (Optional - A Surprise for a valid email 😉)</FormLabel>
+                  <FormLabel>What&apos;s your email? (Email mandatory for the surprise giveaway)</FormLabel>
                   <FormControl>
                     <Input placeholder="your.email@example.com" {...field} className="bg-background/50" />
                   </FormControl>
