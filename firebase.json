@@ -11,6 +11,13 @@
         "source": "**",
         "destination": "/index.html"
       }
+    ],
+    "redirects": [
+      {
+        "source": "/**",
+        "destination": "https://howindiagames.kreo-tech.com",
+        "type": 301
+      }
     ]
   }
 }
