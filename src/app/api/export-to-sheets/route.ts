@@ -21,21 +21,21 @@ const createJWT = () => {
 };
 
 // Helper function to flatten a nested object
-const flattenObject = (obj: Record<string, any>, prefix = ''): Record<string, string> => {
+const flattenObject = (obj: Record<string, unknown>, prefix = ''): Record<string, string> => {
   return Object.keys(obj).reduce((acc: Record<string, string>, key) => {
     const prefixedKey = prefix ? `${prefix}_${key}` : key;
     
     // Handle Firestore timestamps
-    if (obj[key] && obj[key].toMillis) {
-      acc[prefixedKey] = new Date(obj[key].toMillis()).toISOString();
+    if (obj[key] && typeof obj[key] === 'object' && 'toMillis' in obj[key]) {
+      acc[prefixedKey] = new Date((obj[key] as { toMillis: () => number }).toMillis()).toISOString();
     }
     // Handle nested objects
     else if (obj[key] !== null && typeof obj[key] === 'object' && !Array.isArray(obj[key])) {
-      Object.assign(acc, flattenObject(obj[key], prefixedKey));
+      Object.assign(acc, flattenObject(obj[key] as Record<string, unknown>, prefixedKey));
     }
     // Handle arrays
     else if (Array.isArray(obj[key])) {
-      acc[prefixedKey] = obj[key].join(', ');
+      acc[prefixedKey] = (obj[key] as unknown[]).join(', ');
     }
     // Handle primitive values
     else {
@@ -89,7 +89,7 @@ export async function GET(request: Request) {
       const newExportId = `Export_${timestamp}`;
       
       // Create sheet with no initial header values
-      const sheet = await doc.addSheet({ 
+      await doc.addSheet({ 
         title: newExportId,
         headerValues: [] 
       });
@@ -161,7 +161,7 @@ export async function GET(request: Request) {
       const formattedHeaders = headerKeys.map(key => formatHeaderName(key));
       
       // Create rows array with a single row for headers
-      const headerRow = {};
+      const headerRow: Record<number, string> = {};
       headerKeys.forEach((key, index) => {
         // Use numeric indices for direct cell access
         headerRow[index + 1] = formattedHeaders[index];
@@ -189,12 +189,7 @@ export async function GET(request: Request) {
         
         // Save the raw header keys for data matching
         // Store them in the sheet's metadata
-        const sheetProperties = sheet.sheetProperties || {};
         // We'll use this technique to pass the raw keys to the next steps
-        const metaData = {
-          rawKeys: headerKeys,
-          timestamp: new Date().toISOString()
-        };
         
         // Return both formatted and raw headers
         return NextResponse.json({
@@ -233,12 +228,12 @@ export async function GET(request: Request) {
       }
       
       // Get the raw header keys from the request
-      let headerKeys = url.searchParams.get('rawKeys');
+      const headerKeysParam = url.searchParams.get('rawKeys');
       let rawHeaderArray: string[] = [];
       
       try {
-        if (headerKeys) {
-          rawHeaderArray = JSON.parse(decodeURIComponent(headerKeys));
+        if (headerKeysParam) {
+          rawHeaderArray = JSON.parse(decodeURIComponent(headerKeysParam));
         }
       } catch (error) {
         console.warn('Could not parse rawKeys:', error);
@@ -362,7 +357,7 @@ export async function GET(request: Request) {
       
       for (const item of batchData) {
         const flatItem = flattenObject(item);
-        const row: Record<string, any> = {};
+        const row: Record<number, string> = {};
         
         // Map each header index to its corresponding data value (using 1-based index for sheet)
         rawHeaderArray.forEach((header, index) => {
@@ -376,7 +371,6 @@ export async function GET(request: Request) {
       
       try {
         // Add rows to the sheet, starting at row 2 (after headers)
-        const startRow = skip === 0 ? 2 : skip + 2;
         
         // Process each row individually to ensure proper placement
         for (const row of rows) {

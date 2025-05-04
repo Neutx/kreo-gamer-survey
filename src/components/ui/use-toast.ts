@@ -1,5 +1,5 @@
 // Re-export the useToast function from toast.tsx
-import { useToast as useToastOriginal, useToastShow, Toast, ToastProvider } from './toast';
+import { useToast as useToastOriginal, Toast, ToastProvider } from './toast';
 
 // Export the toast function and the context for compatibility
 export const useToast = () => {
@@ -23,4 +23,5 @@ export const useToast = () => {
 };
 
 // For direct import
-export { Toast, ToastProvider }; 
+export type { Toast };
+export { ToastProvider }; 

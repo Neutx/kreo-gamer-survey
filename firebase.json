@@ -15,8 +15,9 @@
     "redirects": [
       {
         "source": "/**",
-        "destination": "https://howindiagames.kreo-tech.com",
-        "type": 301
+        "destination": "https://howindiagames.kreo-tech.com/:path*",
+        "type": 301,
+        "regex": false
       }
     ]
   }
