@@ -1,14 +1,16 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { collection, getDocs, deleteDoc, doc, Timestamp, getDoc } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc, Timestamp, getDoc, query, orderBy, limit, startAfter } from 'firebase/firestore';
 import { db } from '@/lib/firebase';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { SurveyData } from '@/types/survey';
-import { FileDown } from 'lucide-react';
+import { FileDown, FileSpreadsheet } from 'lucide-react';
+import { initializeGoogleSheetsExport, processExportBatch, ExportProgress } from '@/lib/sheets-service';
+import { useToast } from '@/components/ui/toast';
 
 // Define types for conditional sections
 type ConditionalSectionData = Record<string, string | string[] | number | boolean | null>;
@@ -53,6 +55,11 @@ export default function Dashboard() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
   const [exportLoading, setExportLoading] = useState(false);
+  const [googleSheetsExportLoading, setGoogleSheetsExportLoading] = useState(false);
+  const [exportProgress, setExportProgress] = useState<ExportProgress | null>(null);
+  const [showExportDialog, setShowExportDialog] = useState(false);
+
+  const { toast } = useToast();
 
   useEffect(() => {
     fetchResponses();
@@ -161,38 +168,126 @@ export default function Dashboard() {
     }, {} as Record<string, string>);
   };
 
-  // Improved CSV export function to ensure all data is included
+  // Improved CSV export function that uses batching
   const exportToCSV = async () => {
     setExportLoading(true);
+    setShowExportDialog(true);
+    setExportProgress({
+      success: true,
+      total: 0,
+      processed: 0,
+      complete: false,
+      message: 'Starting CSV export...'
+    });
+    
     try {
-      // Ensure we have the latest data with a fresh fetch
+      // First determine approximate total
       const responsesCollection = collection(db, 'responses');
-      const responsesSnapshot = await getDocs(responsesCollection);
+      const countQuery = query(responsesCollection, limit(1000));
+      const countSnapshot = await getDocs(countQuery);
+      const estimatedTotal = countSnapshot.size;
       
-      const fullResponsesList = await Promise.all(
-        responsesSnapshot.docs.map(async (docSnapshot) => {
-          // Get the full document for each response
-          const fullDoc = await getDoc(doc(db, 'responses', docSnapshot.id));
-          return {
-            id: docSnapshot.id,
-            ...fullDoc.data()
-          } as ResponseData;
-        })
-      );
+      setExportProgress({
+        success: true,
+        total: estimatedTotal,
+        processed: 0,
+        complete: false,
+        message: `Preparing to export approximately ${estimatedTotal} records`
+      });
       
-      // Create CSV header
+      // Collect data in batches
+      let allData: Record<string, string>[] = [];
+      let lastDoc = null;
+      let processed = 0;
+      const BATCH_SIZE = 100;
+      let batchNumber = 0;
+      
+      let hasMore = true;
+      while (hasMore) {
+        batchNumber++;
+        // Build query for this batch
+        let batchQuery = query(
+          responsesCollection,
+          orderBy('user_info.last_updated', 'desc'),
+          limit(BATCH_SIZE)
+        );
+        
+        // If we have a last document, start after it
+        if (lastDoc) {
+          batchQuery = query(
+            responsesCollection,
+            orderBy('user_info.last_updated', 'desc'),
+            startAfter(lastDoc),
+            limit(BATCH_SIZE)
+          );
+        }
+        
+        // Get the batch
+        const batchSnapshot = await getDocs(batchQuery);
+        
+        if (batchSnapshot.empty) {
+          hasMore = false;
+          break;
+        }
+        
+        // Process documents in this batch
+        const batchDocuments = await Promise.all(
+          batchSnapshot.docs.map(async (docSnapshot) => {
+            return {
+              id: docSnapshot.id,
+              ...docSnapshot.data()
+            } as ResponseData;
+          })
+        );
+        
+        // Flatten the documents
+        const batchFlatData = batchDocuments.map(doc => flattenObject(doc));
+        
+        // Add to our collection
+        allData = [...allData, ...batchFlatData];
+        
+        // Update last document for pagination
+        lastDoc = batchSnapshot.docs[batchSnapshot.docs.length - 1];
+        
+        // Update progress
+        processed += batchSnapshot.docs.length;
+        setExportProgress({
+          success: true,
+          total: estimatedTotal,
+          processed,
+          complete: false,
+          message: `Collected ${processed} of approximately ${estimatedTotal} records (batch ${batchNumber})`
+        });
+        
+        // Check if we've reached the end
+        if (batchSnapshot.docs.length < BATCH_SIZE) {
+          hasMore = false;
+        }
+        
+        // Add a small delay to avoid overwhelming Firebase
+        await new Promise(resolve => setTimeout(resolve, 300));
+      }
+      
+      setExportProgress({
+        success: true,
+        total: processed,
+        processed,
+        complete: false,
+        message: 'Generating CSV file...'
+      });
+      
+      // Now that we have all data, generate the CSV
+      // Create CSV header from all possible columns
       const headers = new Set<string>();
-      const flattenedResponses = fullResponsesList.map(response => {
-        const flat = flattenObject(response);
-        Object.keys(flat).forEach(key => headers.add(key));
-        return flat;
+      allData.forEach(item => {
+        Object.keys(item).forEach(key => headers.add(key));
       });
       
       const headerRow = Array.from(headers).join(',');
       const csvRows = [headerRow];
       
       // Add data rows
-      flattenedResponses.forEach(response => {
+      allData.forEach(response => {
         const row = Array.from(headers).map(header => {
           const value = response[header] !== undefined ? response[header] : '';
           // Wrap values in quotes and escape any quotes inside the value
@@ -214,11 +309,141 @@ export default function Dashboard() {
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
+      
+      setExportProgress({
+        success: true,
+        total: processed,
+        processed,
+        complete: true,
+        message: `Successfully exported ${processed} records to CSV`
+      });
+      
+      toast({
+        title: "CSV Export Successful",
+        description: `Successfully exported ${processed} records to CSV file.`
+      });
     } catch (error) {
       console.error('Error exporting to CSV:', error);
-      alert('Failed to export responses. Please try again.');
+      
+      toast({
+        title: "CSV Export Failed",
+        description: "An error occurred while exporting to CSV. Please try again."
+      });
+      
+      setExportProgress({
+        success: false,
+        total: 0,
+        processed: 0,
+        complete: true,
+        error: error instanceof Error ? error.message : 'Unexpected error'
+      });
     } finally {
       setExportLoading(false);
+    }
+  };
+
+  // Function to handle exporting all responses to Google Sheets
+  const handleExportToGoogleSheets = async () => {
+    if (!confirm('Are you sure you want to export all responses to Google Sheets? This may take some time for large datasets.')) {
+      return;
+    }
+    
+    setGoogleSheetsExportLoading(true);
+    setShowExportDialog(true);
+    
+    try {
+      // Step 1: Initialize the export and create headers
+      setExportProgress({
+        success: true,
+        total: 0,
+        processed: 0,
+        complete: false,
+        message: 'Initializing export and creating headers...'
+      });
+      
+      const initialResult = await initializeGoogleSheetsExport();
+      setExportProgress(initialResult);
+      
+      if (!initialResult.success) {
+        toast({
+          title: "Export Failed",
+          description: initialResult.error || "Failed to initialize export to Google Sheets",
+        });
+        return;
+      }
+      
+      // Step 2: Process data in batches
+      let currentProgress = initialResult;
+      let batchNumber = 0;
+      
+      while (currentProgress.success && !currentProgress.complete) {
+        // Add a short delay to avoid overwhelming the server
+        await new Promise(resolve => setTimeout(resolve, 500));
+        
+        // Continue with the next batch
+        batchNumber++;
+        console.log(`Processing batch ${batchNumber}, ${currentProgress.processed} records processed so far`);
+        
+        const nextResult = await processExportBatch(
+          currentProgress.exportId!,
+          currentProgress.processed,
+          currentProgress.total || 5000, // Estimate if unknown
+          currentProgress.rawKeys // Pass the raw keys for consistent mapping
+        );
+        
+        setExportProgress(nextResult);
+        currentProgress = nextResult;
+        
+        if (!nextResult.success) {
+          toast({
+            title: "Export Failed",
+            description: nextResult.error || `Failed on batch ${batchNumber}`,
+          });
+          break;
+        }
+      }
+      
+      // Final toast notification when complete
+      if (currentProgress.success && currentProgress.complete) {
+        toast({
+          title: "Export Successful",
+          description: `All ${currentProgress.processed} responses have been exported to Google Sheets successfully.`,
+        });
+      }
+    } catch (error) {
+      console.error('Error exporting to Google Sheets:', error);
+      toast({
+        title: "Export Failed",
+        description: "An unexpected error occurred while exporting data to Google Sheets.",
+      });
+      
+      // Set error state in the progress
+      if (exportProgress) {
+        setExportProgress({
+          ...exportProgress,
+          success: false,
+          complete: true,
+          error: error instanceof Error ? error.message : 'Unexpected error'
+        });
+      } else {
+        setExportProgress({
+          success: false,
+          total: 0,
+          processed: 0,
+          complete: true,
+          error: error instanceof Error ? error.message : 'Unexpected error'
+        });
+      }
+    } finally {
+      setGoogleSheetsExportLoading(false);
+    }
+  };
+
+  // Close the export dialog
+  const handleCloseExportDialog = () => {
+    if (!googleSheetsExportLoading) {
+      setShowExportDialog(false);
+      setExportProgress(null);
     }
   };
 
@@ -227,21 +452,34 @@ export default function Dashboard() {
       {/* Export Card */}
       <Card className="bg-gray-900 border-gray-800">
         <CardContent className="p-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col space-y-4 md:flex-row md:space-y-0 md:space-x-4 md:items-center md:justify-between">
             <div>
               <h3 className="text-xl font-bold text-white mb-2">Export Survey Data</h3>
-              <p className="text-gray-400">Download all survey responses in CSV format for analysis</p>
+              <p className="text-gray-400">Download or export all survey responses for analysis</p>
             </div>
-            <Button
-              variant="default"
-              size="lg"
-              className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
-              onClick={exportToCSV}
-              disabled={exportLoading || loading || responses.length === 0}
-            >
-              <FileDown size={18} />
-              {exportLoading ? 'Exporting...' : 'Export All Responses (CSV)'}
-            </Button>
+            <div className="flex flex-col space-y-2 md:flex-row md:space-y-0 md:space-x-2">
+              <Button
+                variant="default"
+                size="lg"
+                className="bg-purple-600 hover:bg-purple-700 text-white flex items-center gap-2"
+                onClick={exportToCSV}
+                disabled={exportLoading || loading || responses.length === 0}
+              >
+                <FileDown size={18} />
+                {exportLoading ? 'Exporting...' : 'Export to CSV'}
+              </Button>
+              
+              <Button
+                variant="outline"
+                size="lg"
+                className="border-purple-600 text-purple-400 hover:bg-purple-950/30 flex items-center gap-2"
+                onClick={handleExportToGoogleSheets}
+                disabled={googleSheetsExportLoading || loading || responses.length === 0}
+              >
+                <FileSpreadsheet size={18} />
+                {googleSheetsExportLoading ? 'Exporting...' : 'Export to Google Sheets'}
+              </Button>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -418,6 +656,95 @@ export default function Dashboard() {
               })}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Export Progress Dialog */}
+      <Dialog open={showExportDialog} onOpenChange={handleCloseExportDialog}>
+        <DialogContent className="bg-gray-900 text-white border-gray-800">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">
+              {exportProgress?.complete 
+                ? "Export Complete" 
+                : exportLoading
+                  ? "Exporting to CSV"
+                  : "Exporting to Google Sheets"}
+            </DialogTitle>
+            <DialogDescription className="text-gray-400">
+              {exportProgress?.message || "Preparing data for export..."}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-6 mt-4">
+            {/* Progress bar */}
+            <div className="w-full bg-gray-700 rounded-full h-4 overflow-hidden">
+              <div 
+                className="bg-gradient-to-r from-purple-500 to-indigo-500 h-full rounded-full transition-all duration-300 ease-in-out"
+                style={{ 
+                  width: exportProgress 
+                    ? `${Math.min(
+                        Math.max(
+                          (exportProgress.processed / (exportProgress.total || 1)) * 100, 
+                          5
+                        ), 
+                        100
+                      )}%` 
+                    : '5%'
+                }}
+              />
+            </div>
+            
+            {/* Progress details */}
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div className="bg-gray-800 p-3 rounded-md">
+                <span className="text-gray-400">Processed:</span>{' '}
+                <span className="text-white">{exportProgress?.processed || 0} records</span>
+              </div>
+              <div className="bg-gray-800 p-3 rounded-md">
+                <span className="text-gray-400">Total (est.):</span>{' '}
+                <span className="text-white">{exportProgress?.total || 'Calculating...'}</span>
+              </div>
+              <div className="bg-gray-800 p-3 rounded-md">
+                <span className="text-gray-400">Status:</span>{' '}
+                <span className={`${exportProgress?.complete ? "text-green-400" : "text-amber-400"}`}>
+                  {exportProgress?.complete 
+                    ? "Complete" 
+                    : exportProgress?.success 
+                      ? "In Progress" 
+                      : "Failed"}
+                </span>
+              </div>
+              {exportProgress?.exportId && !exportLoading && (
+                <div className="bg-gray-800 p-3 rounded-md">
+                  <span className="text-gray-400">Sheet:</span>{' '}
+                  <span className="text-white">{exportProgress.sheetTitle || exportProgress.exportId}</span>
+                </div>
+              )}
+            </div>
+            
+            {/* Action buttons */}
+            <div className="flex justify-end space-x-2 mt-4">
+              {exportProgress?.complete && (
+                <Button
+                  variant="default"
+                  className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-2"
+                  onClick={handleCloseExportDialog}
+                >
+                  Close
+                </Button>
+              )}
+              {!exportProgress?.complete && (
+                <Button
+                  variant="outline"
+                  className="border-gray-600 text-gray-400 hover:bg-gray-800"
+                  onClick={handleCloseExportDialog}
+                  disabled={googleSheetsExportLoading || exportLoading}
+                >
+                  {(googleSheetsExportLoading || exportLoading) ? "Exporting..." : "Cancel"}
+                </Button>
+              )}
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>

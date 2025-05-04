@@ -2,7 +2,7 @@
 
 import React, { createContext, useContext, useState } from "react";
 
-interface Toast {
+export interface Toast {
   id: string;
   title: string;
   description?: string;

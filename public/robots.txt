@@ -1,7 +1,6 @@
 # *
 User-agent: *
 Allow: /
-Allow: /survey
 Disallow: /admin-view
 Disallow: /api
 
