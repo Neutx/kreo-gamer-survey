@@ -46,6 +46,9 @@ export const saveSurveyResponses = async (
     // Check if document exists
     const docSnap = await getDoc(responseRef);
     
+    // Extract user_info from responses to handle it separately
+    const { user_info = {}, ...otherResponses } = responses;
+    
     if (!docSnap.exists()) {
       // Create new document with user info
       await setDoc(responseRef, {
@@ -55,17 +58,29 @@ export const saveSurveyResponses = async (
           last_updated: serverTimestamp(),
           completion_status: 'in_progress',
           completion_percentage: calculateCompletionPercentage(responses),
-          current_section: currentSection
+          current_section: currentSection,
+          // Preserve IP and device info if provided
+          ...(user_info.ip_address ? { ip_address: user_info.ip_address } : {}),
+          ...(user_info.device_fingerprint ? { device_fingerprint: user_info.device_fingerprint } : {})
         },
-        ...responses
+        ...otherResponses
       });
     } else {
-      // Update existing document
+      // Get existing data to preserve any fields not in the current update
+      const existingData = docSnap.data();
+      const existingUserInfo = existingData?.user_info || {};
+      
+      // Update document preserving existing user_info fields
       await updateDoc(responseRef, {
-        ...responses,
+        ...otherResponses,
         'user_info.last_updated': serverTimestamp(),
         'user_info.completion_percentage': calculateCompletionPercentage(responses),
-        'user_info.current_section': currentSection
+        'user_info.current_section': currentSection,
+        // Preserve IP and device info if provided
+        ...(user_info.ip_address ? { 'user_info.ip_address': user_info.ip_address } : 
+            existingUserInfo.ip_address ? { 'user_info.ip_address': existingUserInfo.ip_address } : {}),
+        ...(user_info.device_fingerprint ? { 'user_info.device_fingerprint': user_info.device_fingerprint } :
+            existingUserInfo.device_fingerprint ? { 'user_info.device_fingerprint': existingUserInfo.device_fingerprint } : {})
       });
     }
     

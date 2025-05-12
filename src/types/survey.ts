@@ -1,3 +1,5 @@
+import { Timestamp } from 'firebase/firestore';
+
 export type SurveySection = 
   | 'demographics'
   | 'demographics_under18'
@@ -38,7 +40,20 @@ export interface Demographics25Plus {
   igfr?: string;
 }
 
+export interface UserInfo {
+  session_id?: string;
+  start_time?: Timestamp;
+  last_updated?: Timestamp;
+  completion_status?: 'in_progress' | 'completed';
+  completion_percentage?: number;
+  current_section?: SurveySection;
+  ip_address?: string;
+  device_fingerprint?: string;
+  completion_time?: Timestamp;
+}
+
 export interface SurveyData {
+  user_info?: UserInfo;
   demographics: DemographicsBase;
   demographics_under18?: DemographicsUnder18;
   demographics_18to24?: Demographics18to24;

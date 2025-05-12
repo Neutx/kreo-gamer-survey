@@ -3,6 +3,8 @@
 import { createContext, useContext, useState, ReactNode, useEffect, useRef, useCallback } from 'react';
 import { SurveySection, SurveyData } from '@/types/survey';
 import { saveSurveyResponses, markSurveyCompleted } from '@/lib/survey-service';
+import { getClientIP, getDeviceFingerprint, checkExistingSubmission, checkExistingDeviceSubmission } from '@/lib/ip-service';
+import { useRouter } from 'next/navigation';
 
 interface SurveyContextType {
   currentSection: SurveySection;
@@ -19,6 +21,10 @@ interface SurveyContextType {
   getFamilySection: () => SurveySection;
   getSectionOrder: () => SurveySection[];
   forceSave: () => void;
+  userIP: string;
+  deviceFingerprint: string;
+  hasSubmitted: boolean;
+  isChecking: boolean;
 }
 
 const LOCAL_STORAGE_KEYS = {
@@ -37,6 +43,14 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
   const [isInitialized, setIsInitialized] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  
+  // New state for IP and submission tracking
+  const [userIP, setUserIP] = useState<string>('');
+  const [deviceFingerprint, setDeviceFingerprint] = useState<string>('');
+  const [hasSubmitted, setHasSubmitted] = useState<boolean>(false);
+  const [isChecking, setIsChecking] = useState<boolean>(true);
+  
+  const router = useRouter();
   
   // Ref for tracking user inactivity
   const inactivityTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -215,13 +229,58 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentSectionIndex, isInitialized]);
   
+  // Check for existing submission on component mount
+  useEffect(() => {
+    const checkSubmission = async () => {
+      if (typeof window !== 'undefined') {
+        setIsChecking(true);
+        
+        // Get device fingerprint
+        const fingerprint = getDeviceFingerprint();
+        setDeviceFingerprint(fingerprint);
+        
+        // Get IP address
+        const ip = await getClientIP();
+        setUserIP(ip);
+        
+        // Check if a submission exists from either this IP or device
+        if (ip || fingerprint) {
+          const ipSubmissionExists = await checkExistingSubmission(ip);
+          const deviceSubmissionExists = await checkExistingDeviceSubmission(fingerprint);
+          
+          const hasAlreadySubmitted = ipSubmissionExists || deviceSubmissionExists;
+          setHasSubmitted(hasAlreadySubmitted);
+          
+          // If a submission exists, redirect to the already-submitted page
+          if (hasAlreadySubmitted) {
+            router.push('/survey/already-submitted');
+          }
+        }
+        
+        setIsChecking(false);
+      }
+    };
+    
+    checkSubmission();
+  }, [router]);
+
   // Function to save data to Firebase
   const saveToFirebase = async () => {
     if (Object.keys(responses).length === 0) return;
     
     setIsSaving(true);
     try {
-      await saveSurveyResponses(responses, getSectionOrder()[currentSectionIndex]);
+      // Include IP and device info with the submission
+      const enhancedResponses = {
+        ...responses,
+        user_info: {
+          ...(responses.user_info || {}),
+          ip_address: userIP,
+          device_fingerprint: deviceFingerprint
+        }
+      };
+      
+      await saveSurveyResponses(enhancedResponses, getSectionOrder()[currentSectionIndex]);
       setLastSaved(new Date());
     } catch (error) {
       console.error('Error saving to Firebase:', error);
@@ -344,6 +403,10 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
         getFamilySection,
         getSectionOrder,
         forceSave,
+        userIP,
+        deviceFingerprint,
+        hasSubmitted,
+        isChecking,
       }}
     >
       {children}

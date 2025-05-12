@@ -5,6 +5,7 @@ import { SurveyProvider } from '@/context/SurveyContext';
 import SurveyLayout from '@/components/survey/SurveyLayout';
 import Background from '@/components/survey/Background';
 import { surveyJsonLd } from '@/lib/structured-data';
+import SurveyWrapper from '@/components/survey/SurveyWrapper';
 
 export default function SurveyPage() {
   return (
@@ -15,7 +16,9 @@ export default function SurveyPage() {
       />
       <SurveyProvider>
         <Background />
-        <SurveyLayout />
+        <SurveyWrapper>
+          <SurveyLayout />
+        </SurveyWrapper>
       </SurveyProvider>
     </>
   );

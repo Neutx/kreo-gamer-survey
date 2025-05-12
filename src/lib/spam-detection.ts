@@ -7,7 +7,7 @@ const BLOCKED_EMAIL_PATTERNS = [
 ];
 
 // Array to store blocked IPs
-let blockedIPs: string[] = [];
+const blockedIPs: string[] = [];
 
 /**
  * Check if an email matches any blocked pattern

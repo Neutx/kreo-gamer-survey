@@ -9,13 +9,48 @@ import { Separator } from '@/components/ui/separator';
 import { Boxes } from "@/components/ui/background-boxes";
 import InfiniteMovingCardsDemo from '@/components/infinite-moving-cards-demo';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
+import { useRouter } from 'next/navigation';
+import { getClientIP, getDeviceFingerprint, checkExistingSubmission, checkExistingDeviceSubmission } from '@/lib/ip-service';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
+  const [isCheckingSubmission, setIsCheckingSubmission] = useState(false);
+  const router = useRouter();
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const handleSurveyClick = async (e: React.MouseEvent) => {
+    e.preventDefault();
+    setIsCheckingSubmission(true);
+    
+    // Get device fingerprint
+    const fingerprint = getDeviceFingerprint();
+    
+    // Get IP address
+    const ip = await getClientIP();
+    
+    // Check if a submission exists from either this IP or device
+    if (ip || fingerprint) {
+      const ipSubmissionExists = await checkExistingSubmission(ip);
+      const deviceSubmissionExists = await checkExistingDeviceSubmission(fingerprint);
+      
+      const hasAlreadySubmitted = ipSubmissionExists || deviceSubmissionExists;
+      
+      // If a submission exists, redirect to the already-submitted page
+      if (hasAlreadySubmitted) {
+        router.push('/survey/already-submitted');
+      } else {
+        router.push('/survey');
+      }
+    } else {
+      // If we couldn't get the IP or fingerprint, just go to the survey
+      router.push('/survey');
+    }
+    
+    setIsCheckingSubmission(false);
+  };
 
   if (!mounted) return null;
 
@@ -129,11 +164,22 @@ export default function Home() {
               </p>
             </div>
             
-            <Link href="/survey" className="pointer-events-auto">
-              <Button className="text-base sm:text-lg px-8 sm:px-12 py-6 sm:py-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-stardom">
-                Take The Survey
+            <div className="pointer-events-auto">
+              <Button 
+                onClick={handleSurveyClick}
+                disabled={isCheckingSubmission}
+                className="text-base sm:text-lg px-8 sm:px-12 py-6 sm:py-8 rounded-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 font-stardom"
+              >
+                {isCheckingSubmission ? (
+                  <>
+                    <span className="h-5 w-5 border-t-2 border-b-2 border-white rounded-full animate-spin mr-2"></span>
+                    Checking...
+                  </>
+                ) : (
+                  'Take The Survey'
+                )}
               </Button>
-            </Link>
+            </div>
           </motion.div>
         </div>
         

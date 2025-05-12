@@ -1,5 +1,5 @@
 import { db } from './firebase';
-import { collection, query, where, getDocs, deleteDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, deleteDoc, doc } from 'firebase/firestore';
 import { isSpamEmail } from './spam-detection';
 
 /**
