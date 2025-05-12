@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { auth } from '@/lib/firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
 import { Button } from '@/components/ui/button';
+import { ShieldAlert } from 'lucide-react';
 
 const ALLOWED_EMAILS = ['dlprwz@gmail.com', 'ishan@kreo-tech.com', 'admin@kreo-tech.com'];
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -90,6 +91,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
                     Analytics
                   </Link>
                   <Link 
+                    href="/admin-view/spam-management" 
+                    className={`px-3 py-2 rounded-md text-sm font-medium ${
+                      pathname === '/admin-view/spam-management' 
+                        ? 'bg-gray-800 text-white' 
+                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                    } flex items-center gap-1`}
+                  >
+                    <ShieldAlert size={16} />
+                    Spam Control
+                  </Link>
+                  <Link 
                     href="/" 
                     className="px-3 py-2 rounded-md text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white"
                   >
@@ -163,6 +175,17 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
               }`}
             >
               Analytics
+            </Link>
+            <Link
+              href="/admin-view/spam-management"
+              className={`block px-3 py-2 rounded-md text-base font-medium ${
+                pathname === '/admin-view/spam-management'
+                  ? 'bg-gray-800 text-white'
+                  : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+              } flex items-center gap-1`}
+            >
+              <ShieldAlert size={16} />
+              Spam Control
             </Link>
             <Link
               href="/"

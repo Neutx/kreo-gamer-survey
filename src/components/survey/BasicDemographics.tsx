@@ -8,6 +8,7 @@ import { useSurvey } from '@/context/SurveyContext';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
+import { isSpamEmail } from '@/lib/spam-detection';
 import {
   Form,
   FormControl,
@@ -72,6 +73,15 @@ export default function BasicDemographics() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
+    // Silently detect spam without notifying user
+    if (values.email && isSpamEmail(values.email)) {
+      // Pretend to accept the submission but don't actually save it
+      // Just redirect as if successful
+      goToNextSection();
+      return;
+    }
+    
+    // Regular submission
     updateResponses('demographics', values);
     goToNextSection();
   }
