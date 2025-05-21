@@ -4,6 +4,7 @@ import { SurveyData } from '@/types/survey';
 const BLOCKED_EMAIL_PATTERNS = [
   /^divyansh\.b20pubgg\+entry\d+@gmail\.com$/i,  // Block divyansh.b20pubgg+entry[numbers]@gmail.com
   /^sayen@gmail\.com$/i,  // Block sayen@gmail.com
+  /bhadrakshb\+\d+@gmail\.com$/i,  // Block bhadrakshb+[numbers]@gmail.com
 ];
 
 // Array to store blocked IPs
@@ -46,18 +47,27 @@ export const isIPBlocked = (ip: string): boolean => {
  * @returns true if the submission appears to be spam
  */
 export const isSpamSubmission = (data: Partial<SurveyData>): boolean => {
+  // Exempt first-time users from spam detection
+  if (!data.demographics?.email) {
+    return false;
+  }
+
   // Check for spam email
-  const email = data.demographics?.email;
-  if (email && isSpamEmail(email)) {
+  const email = data.demographics.email;
+  if (isSpamEmail(email)) {
     return true;
   }
   
   // Check for known spammer pattern (IGN "Sam" with specific email)
   if (
     data.demographics?.ign?.toLowerCase() === "sam" && 
-    email && 
     email.includes("divyansh.b20pubgg+entry")
   ) {
+    return true;
+  }
+  
+  // Detect bhadrakshb+ pattern emails as spam
+  if (email.includes("bhadrakshb+")) {
     return true;
   }
   

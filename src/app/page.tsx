@@ -10,7 +10,6 @@ import { Boxes } from "@/components/ui/background-boxes";
 import InfiniteMovingCardsDemo from '@/components/infinite-moving-cards-demo';
 import { GlowingEffect } from '@/components/ui/glowing-effect';
 import { useRouter } from 'next/navigation';
-import { getClientIP, getDeviceFingerprint, checkExistingSubmission, checkExistingDeviceSubmission } from '@/lib/ip-service';
 
 export default function Home() {
   const [mounted, setMounted] = useState(false);
@@ -25,29 +24,8 @@ export default function Home() {
     e.preventDefault();
     setIsCheckingSubmission(true);
     
-    // Get device fingerprint
-    const fingerprint = getDeviceFingerprint();
-    
-    // Get IP address
-    const ip = await getClientIP();
-    
-    // Check if a submission exists from either this IP or device
-    if (ip || fingerprint) {
-      const ipSubmissionExists = await checkExistingSubmission(ip);
-      const deviceSubmissionExists = await checkExistingDeviceSubmission(fingerprint);
-      
-      const hasAlreadySubmitted = ipSubmissionExists || deviceSubmissionExists;
-      
-      // If a submission exists, redirect to the already-submitted page
-      if (hasAlreadySubmitted) {
-        router.push('/survey/already-submitted');
-      } else {
-        router.push('/survey');
-      }
-    } else {
-      // If we couldn't get the IP or fingerprint, just go to the survey
-      router.push('/survey');
-    }
+    // Go directly to the survey without checking for previous submissions
+    router.push('/survey');
     
     setIsCheckingSubmission(false);
   };
@@ -120,6 +98,29 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col items-center">
+      {/* Admin Navigation - Only visible in development */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-4 right-4 z-50 bg-black/70 p-3 rounded-lg">
+          <div className="flex flex-col gap-2">
+            <Link href="/admin-view">
+              <Button variant="outline" size="sm" className="w-full text-xs">
+                Admin View
+              </Button>
+            </Link>
+            <Link href="/survey">
+              <Button variant="outline" size="sm" className="w-full text-xs">
+                Survey Page
+              </Button>
+            </Link>
+            <Link href="/survey/already-submitted">
+              <Button variant="outline" size="sm" className="w-full text-xs">
+                Already Submitted
+              </Button>
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Hero Section */}
       <section className="relative min-h-screen w-full overflow-hidden bg-slate-900 flex flex-col items-center justify-center">
         {/* Mobile Background */}

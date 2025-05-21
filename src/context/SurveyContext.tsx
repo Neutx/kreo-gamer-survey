@@ -233,6 +233,16 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const checkSubmission = async () => {
       if (typeof window !== 'undefined') {
+        // Only check and redirect for the survey page, not admin or other pages
+        const currentPath = window.location.pathname;
+        const isSurveyPage = currentPath === '/survey' || currentPath === '/survey/';
+        
+        // Don't restrict access to admin-view or other pages
+        if (!isSurveyPage) {
+          setIsChecking(false);
+          return;
+        }
+        
         setIsChecking(true);
         
         // Get device fingerprint
@@ -243,7 +253,7 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
         const ip = await getClientIP();
         setUserIP(ip);
         
-        // Check if a submission exists from either this IP or device
+        // Store the information but don't block or redirect based on it
         if (ip || fingerprint) {
           const ipSubmissionExists = await checkExistingSubmission(ip);
           const deviceSubmissionExists = await checkExistingDeviceSubmission(fingerprint);
@@ -251,10 +261,7 @@ export function SurveyProvider({ children }: { children: ReactNode }) {
           const hasAlreadySubmitted = ipSubmissionExists || deviceSubmissionExists;
           setHasSubmitted(hasAlreadySubmitted);
           
-          // If a submission exists, redirect to the already-submitted page
-          if (hasAlreadySubmitted) {
-            router.push('/survey/already-submitted');
-          }
+          // Removed the redirect to already-submitted page
         }
         
         setIsChecking(false);

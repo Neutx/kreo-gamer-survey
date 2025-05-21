@@ -1,24 +1,24 @@
 'use client';
 // This wrapper checks if the user has already submitted a survey response
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
+import { usePathname } from 'next/navigation';
 import { useSurvey } from '@/context/SurveyContext';
 import { motion } from 'framer-motion';
 
 export default function SurveyWrapper({ children }: { children: React.ReactNode }) {
-  const { isChecking, hasSubmitted } = useSurvey();
-  const router = useRouter();
+  const { isChecking } = useSurvey();
+  const pathname = usePathname();
+  const [shouldCheck, setShouldCheck] = useState(true);
   
-  // Redirect if user has already submitted
-  React.useEffect(() => {
-    if (hasSubmitted) {
-      router.push('/survey/already-submitted');
-    }
-  }, [hasSubmitted, router]);
+  // Check if we're on the main survey page
+  useEffect(() => {
+    const isSurveyMainPage = pathname === '/survey' || pathname === '/survey/';
+    setShouldCheck(isSurveyMainPage);
+  }, [pathname]);
   
   // Show loading state while checking for existing submissions
-  if (isChecking) {
+  if (isChecking && shouldCheck) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center p-4 text-center relative z-10">
         <motion.div
@@ -35,6 +35,6 @@ export default function SurveyWrapper({ children }: { children: React.ReactNode 
     );
   }
   
-  // If we're not checking or the user has not submitted, show the survey
+  // If we're not checking or the user has not submitted, show the children
   return <>{children}</>;
 } 

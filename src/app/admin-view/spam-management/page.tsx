@@ -217,6 +217,7 @@ export default function SpamManagement() {
           <ul className="list-disc pl-5 space-y-2">
             <li>Email pattern: <code>divyansh.b20pubgg+entry[numbers]@gmail.com</code></li>
             <li>Email pattern: <code>sayen@gmail.com</code></li>
+            <li>Email pattern: <code>bhadrakshb+[numbers]@gmail.com</code></li>
             <li>IGN &quot;Sam&quot; combined with email containing &quot;divyansh.b20pubgg+entry&quot;</li>
           </ul>
         </CardContent>
